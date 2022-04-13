@@ -20,7 +20,6 @@ public class TrafficSimulation {
 	
 	public void tick() throws CollisionException {
 		if (!running) throw new IllegalStateException("Can't tick inactive simulation!");
-		System.out.println("Tick!");
 		ticks++;
 		if (ticks > 300) throw new CollisionException();
 	}

@@ -6,7 +6,6 @@ import java.awt.event.WindowEvent;
 import javax.swing.JFrame;
 
 import net.mcmillan.traffic.AppManager;
-import net.mcmillan.traffic.RenderableCanvas;
 
 public class AppWindow {
 
@@ -36,5 +35,7 @@ public class AppWindow {
 		// Set visible in center of screen
 		frame.setLocationRelativeTo(null);
 		frame.setVisible(true);
+		
+		canvas.makeBuffers();
 	}
 }
