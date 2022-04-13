@@ -21,6 +21,7 @@ public class AppManager {
 		instance = new AppManager();
 		instance.setup();
 		instance.loop();
+		instance.exit();
 	}
 
 	private void setup() {
@@ -63,6 +64,10 @@ public class AppManager {
 	
 	public void stop() {
 		System.err.println("STOP!");
+		running = false;
+	}
+	
+	public void exit() {
 		System.exit(0);
 	}
 

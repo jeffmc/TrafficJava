@@ -5,8 +5,6 @@ import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
-import java.awt.event.InputMethodEvent;
-import java.awt.event.InputMethodListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
@@ -16,35 +14,36 @@ import java.awt.event.MouseWheelEvent;
 import java.awt.event.MouseWheelListener;
 import java.awt.image.BufferStrategy;
 
+import net.mcmillan.traffic.math.IVec2;
+
 public class RenderableCanvas {
 
-	private static final int DEFAULT_CANVAS_SIZE = 768;
 	private Canvas canvas;
 	public Canvas getAWTCanvas() { return canvas; }
 	
 	private BufferStrategy bufferStrategy = null;
 	
-	private int width, height;
+	private IVec2 size = IVec2.make();
 	
-	public int getWidth() { return width; }
-	public int getHeight() { return height; }
+	public int getWidth() { return size.x(); }
+	public int getHeight() { return size.y(); }
 	
 	public RenderableCanvas() {
 		canvas = new Canvas();
 		
-		setupCanvas(new Dimension(DEFAULT_CANVAS_SIZE,DEFAULT_CANVAS_SIZE));
+		setupCanvas(new Dimension(1152, 648));
+		updateSizeVec();
+		
 		canvas.addComponentListener(new ComponentAdapter() {
 			@Override public void componentResized(ComponentEvent e) {
-				width = canvas.getWidth();
-				height = canvas.getHeight();
-				System.out.println("New canvas dimensions: [" +width + ", " + height + "]"); // TODO: Add listener model
+				updateSizeVec(); // TODO: Add listener model
 			}
 		});
 		
 		setupEventPolling();
 	}
 
-	private void setupEventPolling() {
+	private void setupEventPolling() { // TODO: Aggregate events into common queue
 		canvas.addKeyListener(new KeyListener() {
 			@Override
 			public void keyTyped(KeyEvent e) { }
@@ -93,6 +92,11 @@ public class RenderableCanvas {
 		canvas.setMinimumSize(size);
 		canvas.setPreferredSize(size);
 		canvas.setMaximumSize(size);
+	}
+	
+	private void updateSizeVec() {
+		size.x(canvas.getWidth());
+		size.y(canvas.getHeight());
 	}
 	
 	public Graphics getGraphics() {

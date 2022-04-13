@@ -23,7 +23,15 @@ public class TrafficRenderer {
 		// TODO: Make real draw
 		g.setColor(Color.black);
 		g.fillRect(0, 0, target.getWidth(), target.getHeight());
+		
+		drawTargetDimensions(g);
+		
 		target.showBuffer();
+	}
+	
+	private void drawTargetDimensions(Graphics g) {
+		g.setColor(Color.white);
+		g.drawString("[" + target.getWidth() + ", " + target.getHeight() + "]", 2, 12);
 	}
 	
 }
