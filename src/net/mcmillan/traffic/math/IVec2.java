@@ -17,14 +17,33 @@ public class IVec2 { // TODO: Add read-only vecs for sending through events
 	public static IVec2 copy(IVec2 src) { return new IVec2(src.n.clone()); }
 	public static IVec2 ref(int[] raw) { return new IVec2(raw); }
 	
+	public IVec2 copy() {
+		return IVec2.copy(this);
+	}
+	
 	public IVec2 add(IVec2 a) {
 		for (int i=0;i<VECSIZE;i++)
 			n[i] += a.n[i];
 		return this;
 	}
+	public IVec2 add(int x, int y) {
+		n[0] += x;
+		n[1] += y;
+		return this;
+	}
 	public IVec2 sub(IVec2 a) {
 		for (int i=0;i<VECSIZE;i++)
 			n[i] -= a.n[i];
+		return this;
+	}
+	public IVec2 sub(int x, int y) {
+		n[0] -= x;
+		n[1] -= y;
+		return this;
+	}
+	public IVec2 div(int d) {
+		for (int i=0;i<VECSIZE;i++)
+			n[i] /= d;
 		return this;
 	}
 }

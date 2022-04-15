@@ -58,7 +58,7 @@ public class RenderableCanvas {
 		canvas.addKeyListener(new KeyListener() {
 			@Override
 			public void keyTyped(KeyEvent e) { 
-				eventq.push(new Event( 0x00));
+				eventq.push(new Event(0x00, new Object[] {e.getKeyChar(), e.getKeyCode(), e.getModifiersEx() }));
 			}
 			
 			@Override
@@ -142,6 +142,7 @@ public class RenderableCanvas {
 ////		Renderer.drawFrame(g); TODO: Impl
 //		g.dispose();
 //	}
+	
 	public void showBuffer() {
 		bufferStrategy.show();
 	}

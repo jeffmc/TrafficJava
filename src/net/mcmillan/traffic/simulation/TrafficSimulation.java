@@ -1,8 +1,17 @@
 package net.mcmillan.traffic.simulation;
 
+import net.mcmillan.traffic.math.IVec2;
+import net.mcmillan.traffic.physics.QuadtreeNode;
+
 public class TrafficSimulation {
 
 	private boolean running = false;
+	
+	public QuadtreeNode quadtree;
+		
+	public TrafficSimulation() {
+		quadtree = QuadtreeNode.randomize(IVec2.make(1024, 1024), 8);
+	}
 	
 	public boolean isRunning() { return running; }
 	
@@ -21,7 +30,7 @@ public class TrafficSimulation {
 	public void tick() throws CollisionException {
 		if (!running) throw new IllegalStateException("Can't tick inactive simulation!");
 		ticks++;
-		if (ticks > 300) throw new CollisionException();
+//		if (ticks > 300) throw new CollisionException();
 	}
 	
 	public void flagCollision(CollisionException e) {

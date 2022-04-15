@@ -26,6 +26,8 @@ public class TrafficRenderer {
 		
 		drawTargetDimensions(g);
 		
+		scene.quadtree.draw(g);
+		
 		target.showBuffer();
 	}
 	
