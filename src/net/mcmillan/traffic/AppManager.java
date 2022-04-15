@@ -25,8 +25,9 @@ public class AppManager {
 	}
 
 	private void setup() {
-		sim = TrafficFactory.generate();
 		window = new AppWindow();
+		
+		sim = TrafficFactory.generate();
 		renderer = new TrafficRenderer();
 		renderer.setScene(sim);
 		renderer.setTarget(window.getCanvas());
@@ -63,7 +64,6 @@ public class AppManager {
 	}
 	
 	public void stop() {
-		System.err.println("STOP!");
 		running = false;
 	}
 	

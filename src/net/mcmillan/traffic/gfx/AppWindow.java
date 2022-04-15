@@ -20,6 +20,7 @@ public class AppWindow {
 		
 		canvas = new RenderableCanvas();
 		
+		
 		frame.setResizable(true);
 		frame.setIgnoreRepaint(true);
 		frame.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
