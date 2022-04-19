@@ -43,24 +43,18 @@ public class AppManager {
 			final long nspf = 1000000000 / 60; // 1/60 of a second in nanoseconds
 			if (delta >= nspf) {
 				lastTime = System.nanoTime();
-//				Timestep ts = new Timestep(delta); TODO: Might implement timestep
-				
-				if (sim.isRunning()) {
-					try {
-						sim.tick();
-					} catch (CollisionException e) {
-						sim.stop();
-						sim.flagCollision(e);
-						e.printStackTrace();
-					}
-				}
-				
-				pollEvents();
-
-				renderer.draw();
-			
+				step(delta);
 			}
 		}
+	}
+	
+	private void step(long delta) { // Delta is given in nanoseconds
+//		Timestep ts = new Timestep(delta); TODO: Might implement timestep
+		if (sim.isRunning()) {
+			sim.tick(delta);
+		}
+		
+		renderer.draw(delta);
 	}
 	
 	public void stop() {
@@ -69,10 +63,5 @@ public class AppManager {
 	
 	public void exit() {
 		System.exit(0);
-	}
-
-	public void pollEvents() {			
-		/* TODO: Parse canvas events and pass them into the renderer's camera 
-		and/or other tools. */
 	}
 }

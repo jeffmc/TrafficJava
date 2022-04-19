@@ -31,16 +31,19 @@ public class RenderableCanvas {
 	public int getWidth() { return size.x(); }
 	public int getHeight() { return size.y(); }
 
+	private KeyListener keyListener;
+	private MouseListener mouseListener;
+	private MouseMotionListener mouseMotionListener;
+	private MouseWheelListener mouseWheelListener;
 	private EventQueue eventq;
-	
 	private EventQueueWindow eqw;
-	
 	
 	public RenderableCanvas() {
 		canvas = new Canvas();
 
 		eventq = new EventQueue();
 		eqw = new EventQueueWindow(eventq);
+		eqw.setVisible(true);
 		
 		setupCanvas(new Dimension(1152, 648));
 		updateSizeVec();
@@ -48,14 +51,15 @@ public class RenderableCanvas {
 		canvas.addComponentListener(new ComponentAdapter() {
 			@Override public void componentResized(ComponentEvent e) {
 				updateSizeVec(); // TODO: Add listener model
+//				eventq.push(new Event(CANVAS_RESIZED))
 			}
 		});
 		
-		setupEventPolling();
+		setupListeners();
 	}
 
-	private void setupEventPolling() { // TODO: Aggregate events into common queue
-		canvas.addKeyListener(new KeyListener() {
+	private void setupListeners() {
+		keyListener = new KeyListener() {
 			@Override
 			public void keyTyped(KeyEvent e) { 
 				eventq.push(new Event(0x00, new Object[] {e.getKeyChar(), e.getKeyCode(), e.getModifiersEx() }));
@@ -70,8 +74,8 @@ public class RenderableCanvas {
 			public void keyPressed(KeyEvent e) {
 				eventq.push(new Event( 0x02));
 			}
-		});
-		canvas.addMouseListener(new MouseListener() {
+		};
+		mouseListener = new MouseListener() {
 			@Override
 			public void mouseReleased(MouseEvent e) {
 				eventq.push(new Event( 0x10));
@@ -96,8 +100,8 @@ public class RenderableCanvas {
 			public void mouseClicked(MouseEvent e) {
 				eventq.push(new Event( 0x14));
 			}
-		});
-		canvas.addMouseMotionListener(new MouseMotionListener() {
+		};
+		mouseMotionListener = new MouseMotionListener() {
 			@Override
 			public void mouseMoved(MouseEvent e) {
 				eventq.push(new Event( 0x15));
@@ -107,13 +111,35 @@ public class RenderableCanvas {
 			public void mouseDragged(MouseEvent e) {
 				eventq.push(new Event( 0x16));
 			}
-		});
-		canvas.addMouseWheelListener(new MouseWheelListener() {
+		};
+		mouseWheelListener = new MouseWheelListener() {
 			@Override
 			public void mouseWheelMoved(MouseWheelEvent e) {
 				eventq.push(new Event( 0x17));
 			}
-		});
+		};
+	}
+	
+	public void setEventQueue(EventQueue eq) {
+		eventq = eq;
+		eqw.setEventQueue(eventq);
+		if (eventq != null) {
+			canvas.addKeyListener(keyListener);
+			canvas.addMouseListener(mouseListener);
+			canvas.addMouseMotionListener(mouseMotionListener);
+			canvas.addMouseWheelListener(mouseWheelListener);
+			System.out.println("Listeners enabled!");
+		} else {
+			canvas.removeKeyListener(keyListener);
+			canvas.removeMouseListener(mouseListener);
+			canvas.removeMouseMotionListener(mouseMotionListener);
+			canvas.removeMouseWheelListener(mouseWheelListener);
+			System.out.println("Listeners removed!");
+		}
+	}
+	
+	public void removeEventQueue() {
+		setEventQueue(null);
 	}
 	
 	public void makeBuffers() {

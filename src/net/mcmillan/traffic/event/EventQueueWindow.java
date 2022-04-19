@@ -18,29 +18,34 @@ import javax.swing.event.ListDataListener;
 
 public class EventQueueWindow {
 	
-	private JFrame frame;
-	
-	private JList<Event> list;
-	private EventListModel model;
-	
-	private EventQueue eventq;
-	
+	private JFrame frame = new JFrame("Event Queue");
+	private JList<Event> list = new JList<>();
 	private JCheckBox[] filterBtns;
 	private int[] filterMasks, filterVals;
 	
+	private EventListModel model = null;
+	private ListModel<Event> nullModel = new ListModel<Event>() { // Null model
+		@Override
+		public void removeListDataListener(ListDataListener l) { }
+		@Override
+		public int getSize() { return 0; }
+		@Override
+		public Event getElementAt(int index) { return null; }
+		@Override
+		public void addListDataListener(ListDataListener l) { }
+	};
+	
+	private EventQueue eventq;
+	
 	public EventQueueWindow(EventQueue eq) {
-		eventq = eq;
-		frame = new JFrame("Event Queue");
-		list = new JList<>();
-		model = new EventListModel();
-		list.setModel(model);
 		frame.addWindowListener(new WindowAdapter() {
 			@Override 
 			public void windowClosing(WindowEvent e) {
-				model.dispose();
+				if (model != null) model.dispose();
+				frame.setVisible(false);
+				frame.dispose();
 			}
 		});
-		
 		
 		JScrollPane jsp = new JScrollPane(list);
 		jsp.setAutoscrolls(true);
@@ -68,19 +73,41 @@ public class EventQueueWindow {
 		frame.add(fp);
 		frame.add(jsp);
 		frame.pack();
-		frame.setVisible(true);
+		
+		setEventQueue(eq);
+	}
+	
+	public void setEventQueue(EventQueue eq) {
+		if (eq != null) {
+			eventq = eq;
+			model = new EventListModel(eventq);
+			list.setModel(model);
+		} else {
+			eventq = eq;
+			model = null;
+			list.setModel(nullModel);
+		}
+	}
+	
+	public void removeEventQueue() {
+		setEventQueue(null);
+	}
+	
+	public void setVisible(boolean visible) {
+		frame.setVisible(visible);
 	}
 	
 	class EventListModel implements ListModel<Event>, EventQueueObserver {
 		ArrayList<Event> filteredEvents = new ArrayList<>();
-		EventListModel() {
-			eventq.addObserver(this);
+		private EventQueue eq;
+		EventListModel(EventQueue eq) {
+			if (eq == null) throw new IllegalArgumentException("Queue cannot be null");
+			eq.addObserver(this);
 		}
 		void dispose() {
+			eq.removeObserver(this);
 			listeners = null;
-			eventq.removeObserver(this);
 		}
-		
 		private ArrayList<ListDataListener> listeners = new ArrayList<>();
 		@Override
 		public int getSize() { return filteredEvents.size(); }

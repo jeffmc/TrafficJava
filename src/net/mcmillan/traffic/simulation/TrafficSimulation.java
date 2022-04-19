@@ -1,5 +1,6 @@
 package net.mcmillan.traffic.simulation;
 
+import net.mcmillan.traffic.event.EventQueue;
 import net.mcmillan.traffic.math.IVec2;
 import net.mcmillan.traffic.physics.QuadtreeNode;
 
@@ -7,10 +8,16 @@ public class TrafficSimulation {
 
 	private boolean running = false;
 	
-	public QuadtreeNode quadtree;
+	private QuadtreeNode quadtree;
+	
+	public QuadtreeNode getQuadtreeRoot() { return quadtree; }
+	
+	private EventQueue eventq = new EventQueue();
 		
+	public EventQueue getEventQueue() { return eventq; }
+	
 	public TrafficSimulation() {
-		quadtree = QuadtreeNode.randomize(IVec2.make(1024, 1024), 8);
+		quadtree = QuadtreeNode.randomize(IVec2.make(1024, 512), 8);
 	}
 	
 	public boolean isRunning() { return running; }
@@ -26,15 +33,26 @@ public class TrafficSimulation {
 	}
 	
 	private long ticks = 0;
+	public long ticks() { return ticks; }
 	
-	public void tick() throws CollisionException {
+	public void tick(long delta) {
 		if (!running) throw new IllegalStateException("Can't tick inactive simulation!");
+		pollEvents(); // Run this before any update code.
+		update(delta);
 		ticks++;
-//		if (ticks > 300) throw new CollisionException();
+	}
+
+	public void pollEvents() {			
+		/* TODO: Parse canvas events and pass them into the renderer's camera 
+		and/or other tools. */	
 	}
 	
-	public void flagCollision(CollisionException e) {
+	public void update(long delta) {
+		
+	}
+	
+	public void flagCollision(CollisionException e) { // TODO: Rework from an exception into a normal class.
 		// TODO: Impl
 	}
-	
+
 }

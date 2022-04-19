@@ -1,6 +1,6 @@
 package net.mcmillan.traffic.math;
 
-public class IVec2 { // TODO: Add read-only vecs for sending through events
+public class IVec2 { // TODO: Add immutable vectors for sending through events
 	public static final int VECSIZE = 2;
 	
 	private int[] n;
@@ -17,6 +17,8 @@ public class IVec2 { // TODO: Add read-only vecs for sending through events
 	public static IVec2 copy(IVec2 src) { return new IVec2(src.n.clone()); }
 	public static IVec2 ref(int[] raw) { return new IVec2(raw); }
 	
+	
+	public int[] raw() { return n; }
 	public IVec2 copy() {
 		return IVec2.copy(this);
 	}
