@@ -41,7 +41,7 @@ public class EventQueueWindow {
 		frame.addWindowListener(new WindowAdapter() {
 			@Override 
 			public void windowClosing(WindowEvent e) {
-				if (model != null) model.dispose();
+				if (model != null) model.dispose(); // TODO: Fix nullpointerexception on closing this window!
 				frame.setVisible(false);
 				frame.dispose();
 			}
