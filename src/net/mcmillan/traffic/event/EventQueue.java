@@ -18,6 +18,11 @@ public class EventQueue {
 	
 	public boolean removeObserver(EventQueueObserver obs) { return observers.remove(obs); }
 	
+	public boolean isEmpty() {
+		return queue.isEmpty();
+	}
+	
+	// Adds event to the end of queue
 	public void push(Event e) {
 		queue.add(e);
 		for (EventQueueObserver o : observers)
@@ -25,6 +30,7 @@ public class EventQueue {
 //		printList();
 	}
 	
+	// Removes the first event of the queue
 	public Event pop() {
 		Event popped = queue.pop();
 		for (EventQueueObserver o : observers)

@@ -43,13 +43,17 @@ public class QuadtreeNode {
 		return root;
 	}
 	
-	public void draw(Graphics g) {
+	public void draw(Graphics g, IVec2[] mr) {
 		if (children != null) {
 			for (QuadtreeNode n : children)
-				n.draw(g);
+				n.draw(g, mr);
 		} else { 
 			g.setColor(color);
-			g.fillRect(position.x(), position.y(), size.x(), size.y());
+			if (IVec2.rectIntersect(position, size, mr[0], mr[1])) {
+				g.fillRect(position.x(), position.y(), size.x(), size.y());
+			} else {
+				g.drawRect(position.x(), position.y(), size.x(), size.y());
+			}
 		}
 	}
 	

@@ -3,6 +3,7 @@ package net.mcmillan.traffic.gfx;
 import java.awt.Color;
 import java.awt.Graphics;
 
+import net.mcmillan.traffic.math.IVec2;
 import net.mcmillan.traffic.simulation.TrafficSimulation;
 
 public class TrafficRenderer {
@@ -26,13 +27,20 @@ public class TrafficRenderer {
 	
 	public void draw(long delta) {
 		Graphics g = target.getGraphics();
-		// TODO: Make real draw
+		
+		// Background
 		g.setColor(Color.black);
 		g.fillRect(0, 0, target.getWidth(), target.getHeight());
-		
-		
-		scene.getQuadtreeRoot().draw(g);
 
+		IVec2[] mr = scene.getMouseRect();
+		// Draw quadtree!
+		scene.getQuadtreeRoot().draw(g, mr);
+
+		// Draw mouse
+		g.setColor(Color.white);
+		g.drawRect(mr[0].x(), mr[0].y(), mr[1].x(), mr[1].y());
+		System.out.println(mr[0].x() + ", " + mr[0].y() + ", " +mr[1].x() + ", " +mr[1].y());
+		
 		drawTargetDimensions(g, delta);
 		target.showBuffer();
 	}

@@ -19,6 +19,24 @@ public class Event {
 		code = eventcode;
 		lbl = eventTypeFromCode(code);
 		if (code == KEY_TYPED) lbl += ": '" + data[0] + "'";
+		this.data = data;
+	}
+	
+	public int x() {
+		switch (code) {
+		case MOUSE_RELEASED, MOUSE_PRESSED, MOUSE_EXITED, MOUSE_ENTERED, MOUSE_CLICKED, MOUSE_MOVED, MOUSE_DRAGGED, MOUSE_WHEEL_MOVED:
+			return (int) data[0];
+		default:
+			throw new IllegalArgumentException(eventTypeFromCode(code) + " doesn't have x component!");
+		}
+	}
+	public int y() {
+		switch (code) {
+		case MOUSE_RELEASED, MOUSE_PRESSED, MOUSE_EXITED, MOUSE_ENTERED, MOUSE_CLICKED, MOUSE_MOVED, MOUSE_DRAGGED, MOUSE_WHEEL_MOVED:
+			return (int) data[1];
+		default:
+			throw new IllegalArgumentException(eventTypeFromCode(code) + " doesn't have y component!");
+		}
 	}
 	
 	public static String eventTypeFromCode(int eventcode) {
@@ -45,8 +63,9 @@ public class Event {
 			return "MouseDragged";
 		case MOUSE_WHEEL_MOVED:
 			return "MouseWheelMoved";
+		default:
+			return "InvalidEventCode(" + eventcode + ")";
 		}
-		throw new IllegalArgumentException("Invalid Event Code: " + eventcode);
 	}
 	
 	@Override

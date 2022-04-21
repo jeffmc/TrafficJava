@@ -139,9 +139,11 @@ public class EventQueueWindow {
 		@Override
 		public void eventRemoved(Event e, int idx) {
 			int fidx = filteredEvents.indexOf(e);
-			if (fidx >= 0) filteredEvents.remove(fidx);
-			for (ListDataListener l : listeners)
-				l.intervalRemoved(new ListDataEvent(this, ListDataEvent.INTERVAL_REMOVED, fidx, fidx+1)); // TODO: Rethink "this" use for source
+			if (fidx >= 0) {
+				filteredEvents.remove(fidx);	
+				for (ListDataListener l : listeners)
+					l.intervalRemoved(new ListDataEvent(this, ListDataEvent.INTERVAL_REMOVED, fidx, fidx+1)); // TODO: Rethink "this" use for source
+			}
 		}
 		
 	}
