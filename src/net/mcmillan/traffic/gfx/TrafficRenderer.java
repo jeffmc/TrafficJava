@@ -1,7 +1,6 @@
 package net.mcmillan.traffic.gfx;
 
 import java.awt.Color;
-import java.awt.Graphics;
 
 import net.mcmillan.traffic.math.IVec2;
 import net.mcmillan.traffic.simulation.TrafficSimulation;
@@ -14,6 +13,7 @@ public class TrafficRenderer {
 	
 	public void setScene(TrafficSimulation sim) {
 		scene = sim;
+		cameraGfx.setCamera(scene.getCamera());
 		if (scene != null && target != null) {
 			target.setEventQueue(scene.getEventQueue());
 		}
@@ -24,6 +24,10 @@ public class TrafficRenderer {
 		if (scene != null && target != null) {
 			target.setEventQueue(scene.getEventQueue());
 		}
+	}
+	
+	public void setCamera(Camera c) {
+		cameraGfx.setCamera(c);
 	}
 	
 	public void draw(long delta) {
