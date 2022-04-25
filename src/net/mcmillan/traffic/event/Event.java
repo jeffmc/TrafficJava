@@ -1,6 +1,15 @@
 package net.mcmillan.traffic.event;
 
+import java.awt.event.MouseEvent;
+
+import net.mcmillan.traffic.gfx.RenderableCanvas;
+
 public class Event {
+	
+	public static final int NOBUTTON = MouseEvent.NOBUTTON, 
+			BUTTON1 = MouseEvent.BUTTON1, 
+			BUTTON2 = MouseEvent.BUTTON2, 
+			BUTTON3 = MouseEvent.BUTTON3;
 	
 	public static final int KEY_TYPED = 0x00, KEY_RELEASED = 0x01, KEY_PRESSED = 0x02,
 			MOUSE_RELEASED = 0x10, MOUSE_PRESSED = 0x11, MOUSE_EXITED = 0x12, MOUSE_ENTERED = 0x13,
@@ -11,14 +20,17 @@ public class Event {
 	public String getLabel() { return lbl; }
 	private Object[] data;
 	
-	public Event(int eventcode) {
-		this(eventcode, null);
+	private RenderableCanvas origin;
+	public RenderableCanvas getOrigin() { return origin; }
+	
+	public Event(RenderableCanvas origin, int eventcode) {
+		this(origin, eventcode, null);
 	}
 	
-	public Event(int eventcode, Object[] data) {
+	public Event(RenderableCanvas origin, int eventcode, Object[] data) {
+		this.origin = origin;
 		code = eventcode;
-		lbl = eventTypeFromCode(code);
-		if (code == KEY_TYPED) lbl += ": '" + data[0] + "'";
+		lbl = "Event";
 		this.data = data;
 	}
 	
@@ -36,6 +48,14 @@ public class Event {
 			return (int) data[1];
 		default:
 			throw new IllegalArgumentException(eventTypeFromCode(code) + " doesn't have y component!");
+		}
+	}
+	public int button() {
+		switch (code) {
+		case MOUSE_RELEASED, MOUSE_PRESSED, MOUSE_EXITED, MOUSE_ENTERED, MOUSE_CLICKED, MOUSE_MOVED, MOUSE_DRAGGED:
+			return (int) data[2];
+		default:
+			throw new IllegalArgumentException(eventTypeFromCode(code) + " doesn't have button component!");
 		}
 	}
 	

@@ -45,21 +45,35 @@ public class TrafficSimulation {
 		ticks++;
 	}
 
-	public void pollEvents() {			
-		/* TODO: Parse canvas events and pass them into the renderer's camera 
-		and/or other tools. */	
+	public void pollEvents() {
 		while (!eventq.isEmpty()) {
 			Event e = eventq.pop();
 			switch (e.code) {
 			case Event.MOUSE_PRESSED:
-				mstart.set(e.x(), e.y());
-				mnow.set(mstart);
+				switch (e.button()) {
+				case Event.BUTTON1:
+					mstart.set(e.x(), e.y());
+					mnow.set(mstart);
+					break;
+				case Event.BUTTON2:
+					System.out.println(e.x() + ", " + e.y());
+					break;
+				}
 				break;
-//			case Event.MOUSE_RELEASED:
-//				mnow.set(e.x(), e.y());
-//				break;
+			case Event.MOUSE_RELEASED:
+//				switch (e.button()) {
+//				case Event.BUTTON2:
+//					System.out.println(e.x() + ", " + e.y());
+//					break;
+//				}
+				break;
 			case Event.MOUSE_DRAGGED:
 				mnow.set(e.x(), e.y());
+				switch (e.button()) {
+				case Event.BUTTON2:
+					System.out.println(e.x() + ", " + e.y());
+					break;
+				}
 				break;
 			}
 		}
@@ -73,9 +87,7 @@ public class TrafficSimulation {
 	public IVec2[] getMouseRect() {
 		return new IVec2[] { mtl, msize };
 	}
-	
-	public void flagCollision(CollisionException e) { // TODO: Rework from an exception into a normal class.
-		// TODO: Impl
-	}
+
+	// TODO: Implement flagging collisions.
 
 }

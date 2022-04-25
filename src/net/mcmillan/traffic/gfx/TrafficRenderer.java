@@ -10,6 +10,7 @@ public class TrafficRenderer {
 
 	private TrafficSimulation scene;
 	private RenderableCanvas target;
+	private CameraGraphics cameraGfx = new CameraGraphics();
 	
 	public void setScene(TrafficSimulation sim) {
 		scene = sim;
@@ -18,38 +19,40 @@ public class TrafficRenderer {
 		}
 	}
 	
-	public void setTarget(RenderableCanvas canvas) { // Change type to generic
-		target = canvas; // Add listener
+	public void setTarget(RenderableCanvas canvas) {
+		target = canvas; // TODO: Add listener for canvas size change
 		if (scene != null && target != null) {
 			target.setEventQueue(scene.getEventQueue());
 		}
 	}
 	
 	public void draw(long delta) {
-		Graphics g = target.getGraphics();
-		
-		// Background
-		g.setColor(Color.black);
-		g.fillRect(0, 0, target.getWidth(), target.getHeight());
-
-		IVec2[] mr = scene.getMouseRect();
-		// Draw quadtree!
-		scene.getQuadtreeRoot().draw(g, mr);
-
-		// Draw mouse
-		g.setColor(Color.white);
-		g.drawRect(mr[0].x(), mr[0].y(), mr[1].x(), mr[1].y());
-		System.out.println(mr[0].x() + ", " + mr[0].y() + ", " +mr[1].x() + ", " +mr[1].y());
-		
-		drawTargetDimensions(g, delta);
+		cameraGfx.setGraphics(target.getGraphics());
+		intl_draw(cameraGfx, delta);
 		target.showBuffer();
 	}
 	
-	private void drawTargetDimensions(Graphics g, long delta) {
-		g.setColor(Color.white);
-		g.drawString("[" + target.getWidth() + ", " + target.getHeight() + "]", 2, 12);
-		g.drawString("Ticks: " + scene.ticks(), 2, 24);
-		g.drawString("Delta: " + delta, 2, 36);
+	private void intl_draw(CameraGraphics cg, long delta) {
+		// Background
+		cg.setColor(Color.black);
+		cg.fillOverlayRect(0, 0, target.getWidth(), target.getHeight());
+
+		// Draw quadtree!
+		IVec2[] mr = scene.getMouseRect();
+		scene.getQuadtreeRoot().draw(cg, mr);
+
+		// Draw mouse
+		cg.setColor(Color.white);
+		cg.drawRect(mr[0].x(), mr[0].y(), mr[1].x(), mr[1].y());
+		
+		drawTargetDimensions(cg, delta);
+	}
+	
+	private void drawTargetDimensions(CameraGraphics cg, long delta) {
+		cg.setColor(Color.white);
+		cg.drawOverlayString("[" + target.getWidth() + ", " + target.getHeight() + "]", 2, 12);
+		cg.drawOverlayString("Ticks: " + scene.ticks(), 2, 24);
+		cg.drawOverlayString("Delta: " + delta, 2, 36);
 	}
 	
 }

@@ -1,6 +1,7 @@
 package net.mcmillan.traffic.gfx;
 
 import java.awt.Canvas;
+import java.awt.Cursor;
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.event.ComponentAdapter;
@@ -58,64 +59,68 @@ public class RenderableCanvas {
 		setupListeners();
 	}
 
+	public void setCursor(Cursor c) {
+		canvas.setCursor(c);
+	}
+	
 	private void setupListeners() {
 		keyListener = new KeyListener() {
 			@Override
 			public void keyTyped(KeyEvent e) { 
-				eventq.push(new Event(0x00, new Object[] {e.getKeyChar(), e.getKeyCode(), e.getModifiersEx() }));
+				eventq.push(new Event(RenderableCanvas.this, 0x00, new Object[] {e.getKeyChar(), e.getKeyCode(), e.getModifiersEx() }));
 			}
 			
 			@Override
 			public void keyReleased(KeyEvent e) {
-				eventq.push(new Event( 0x01, new Object[] {e.getKeyChar(), e.getKeyCode(), e.getModifiersEx() }));
+				eventq.push(new Event(RenderableCanvas.this, 0x01, new Object[] {e.getKeyChar(), e.getKeyCode(), e.getModifiersEx() }));
 			}
 			
 			@Override
 			public void keyPressed(KeyEvent e) {
-				eventq.push(new Event( 0x02, new Object[] {e.getKeyChar(), e.getKeyCode(), e.getModifiersEx() }));
+				eventq.push(new Event(RenderableCanvas.this, 0x02, new Object[] {e.getKeyChar(), e.getKeyCode(), e.getModifiersEx() }));
 			}
 		};
 		mouseListener = new MouseListener() {
 			@Override
 			public void mouseReleased(MouseEvent e) {
-				eventq.push(new Event( 0x10, new Object[] {e.getX(), e.getY(), e.getButton(), e.getModifiersEx(), e.getClickCount()} ));
+				eventq.push(new Event(RenderableCanvas.this, 0x10, new Object[] {e.getX(), e.getY(), e.getButton(), e.getModifiersEx(), e.getClickCount()} ));
 			}
 			
 			@Override
 			public void mousePressed(MouseEvent e) {
-				eventq.push(new Event(0x11, new Object[] {e.getX(), e.getY(), e.getButton(), e.getModifiersEx(), e.getClickCount()} ));
+				eventq.push(new Event(RenderableCanvas.this, 0x11, new Object[] {e.getX(), e.getY(), e.getButton(), e.getModifiersEx(), e.getClickCount()} ));
 			}
 			
 			@Override
 			public void mouseExited(MouseEvent e) {
-				eventq.push(new Event(0x12, new Object[] {e.getX(), e.getY(), e.getButton(), e.getModifiersEx(), e.getClickCount()} ));
+				eventq.push(new Event(RenderableCanvas.this, 0x12, new Object[] {e.getX(), e.getY(), e.getButton(), e.getModifiersEx(), e.getClickCount()} ));
 			}
 			
 			@Override
 			public void mouseEntered(MouseEvent e) {
-				eventq.push(new Event(0x13, new Object[] {e.getX(), e.getY(), e.getButton(), e.getModifiersEx(), e.getClickCount()} ));
+				eventq.push(new Event(RenderableCanvas.this, 0x13, new Object[] {e.getX(), e.getY(), e.getButton(), e.getModifiersEx(), e.getClickCount()} ));
 			}
 			
 			@Override
 			public void mouseClicked(MouseEvent e) {
-				eventq.push(new Event(0x14, new Object[] {e.getX(), e.getY(), e.getButton(), e.getModifiersEx(), e.getClickCount()} ));
+				eventq.push(new Event(RenderableCanvas.this, 0x14, new Object[] {e.getX(), e.getY(), e.getButton(), e.getModifiersEx(), e.getClickCount()} ));
 			}
 		};
 		mouseMotionListener = new MouseMotionListener() {
 			@Override
 			public void mouseMoved(MouseEvent e) {
-				eventq.push(new Event(0x15, new Object[] {e.getX(), e.getY(), e.getButton(), e.getModifiersEx()} ));
+				eventq.push(new Event(RenderableCanvas.this, 0x15, new Object[] {e.getX(), e.getY(), e.getButton(), e.getModifiersEx()} ));
 			}
 			
 			@Override
 			public void mouseDragged(MouseEvent e) {
-				eventq.push(new Event(0x16, new Object[] {e.getX(), e.getY(), e.getButton(), e.getModifiersEx()} ));
+				eventq.push(new Event(RenderableCanvas.this, 0x16, new Object[] {e.getX(), e.getY(), e.getButton(), e.getModifiersEx()} ));
 			}
 		};
 		mouseWheelListener = new MouseWheelListener() {
 			@Override
 			public void mouseWheelMoved(MouseWheelEvent e) {
-				eventq.push(new Event(0x17, new Object[] {e.getX(), e.getY(), e.getWheelRotation(), e.getModifiersEx() } ));
+				eventq.push(new Event(RenderableCanvas.this, 0x17, new Object[] {e.getX(), e.getY(), e.getWheelRotation(), e.getModifiersEx() } ));
 			}
 		};
 	}

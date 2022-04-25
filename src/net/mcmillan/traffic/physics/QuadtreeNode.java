@@ -1,10 +1,10 @@
 package net.mcmillan.traffic.physics;
 
 import java.awt.Color;
-import java.awt.Graphics;
 import java.util.ArrayList;
 import java.util.Random;
 
+import net.mcmillan.traffic.gfx.CameraGraphics;
 import net.mcmillan.traffic.math.IVec2;
 
 public class QuadtreeNode {
@@ -43,22 +43,30 @@ public class QuadtreeNode {
 		return root;
 	}
 	
-	public void draw(Graphics g, IVec2[] mr) {
+	public void draw(CameraGraphics cg, IVec2[] mr) {
 		if (children != null) {
 			for (QuadtreeNode n : children)
-				n.draw(g, mr);
+				n.draw(cg, mr);
 		} else { 
-			g.setColor(color);
+			cg.setColor(color);
 			if (IVec2.rectIntersect(position, size, mr[0], mr[1])) {
-				g.fillRect(position.x(), position.y(), size.x(), size.y());
+				cg.fillRect(position.x(), position.y(), size.x(), size.y());
 			} else {
-				g.drawRect(position.x(), position.y(), size.x(), size.y());
+				cg.drawRect(position.x(), position.y(), size.x(), size.y());
 			}
 		}
 	}
 	
 	public boolean isRoot() {
 		return parent == null;
+	}
+	
+	public boolean isLeaf() {
+		return children == null;
+	}
+	
+	public boolean isBranch() {
+		return parent != null && children != null;
 	}
 	
 	private QuadtreeNode(QuadtreeNode parent, IVec2 size, IVec2 position) {

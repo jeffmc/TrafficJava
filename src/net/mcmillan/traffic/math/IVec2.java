@@ -99,10 +99,10 @@ public class IVec2 { // TODO: Add immutable vectors for sending through events
 	}
 	
 	public static boolean rectIntersect(IVec2 ap,IVec2 as,IVec2 bp,IVec2 bs) {
-		return (ap.x() >= bp.x() && ap.x() < bp.x()+bs.x() &&
-				ap.y() >= bp.y() && ap.y() < bp.y()+bs.y()) ||
-				(bp.x() >= ap.x() && bp.x() < ap.x()+as.x() &&
-				bp.y() >= ap.y() && bp.y() < ap.y()+as.y());
+		return (ap.x() < bp.x() + bs.x() &&
+	    ap.x() + as.x() > bp.x() &&
+	    ap.y() < bp.y() + bs.y() &&
+	    ap.y() + as.y() > bp.y());
 				
 	}
 	
