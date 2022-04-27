@@ -1,7 +1,6 @@
 package net.mcmillan.traffic.event;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.LinkedList;
 import java.util.concurrent.atomic.AtomicBoolean;
 
@@ -33,11 +32,9 @@ public class EventQueue {
 	// Adds event to the end of queue
 	public void push(Event e) {
 		if (unloading.get()) {
-			try {
-				queue.wait();
-			} catch (InterruptedException e1) {
-				e1.printStackTrace();
-			}
+			long start = System.nanoTime();
+			while (unloading.get()) { } // This is atrocious code
+			System.out.println(System.nanoTime()-start + " waited!");;
 		}
 		queue.add(e);
 		for (EventQueueObserver o : observers)
@@ -45,9 +42,9 @@ public class EventQueue {
 //		printList();
 	}
 	
-	// Removes the first event of the queue
+	// Removes the first event of the unloaded
 	public Event pop() {
-		Event popped = queue.pop();
+		Event popped = unloaded.pop();
 		for (EventQueueObserver o : observers)
 			o.eventRemoved(popped, 0);
 		return popped;
@@ -55,7 +52,7 @@ public class EventQueue {
 	
 	public void unload() {
 		unloading.set(true);
-		Collections.copy(unloaded, queue);
+		unloaded.addAll(queue);
 		queue.clear();
 		unloading.set(false);
 	}

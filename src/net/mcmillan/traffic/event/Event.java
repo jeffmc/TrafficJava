@@ -58,7 +58,14 @@ public class Event {
 			throw new IllegalArgumentException(eventTypeFromCode(code) + " doesn't have button component!");
 		}
 	}
-	
+	public int rotation() {
+		switch (code) {
+		case MOUSE_WHEEL_MOVED:
+			return (int) data[2];
+		default:
+			throw new IllegalArgumentException(eventTypeFromCode(code) + " doesn't have rotation component!");
+		}
+	}
 	public static String eventTypeFromCode(int eventcode) {
 		switch (eventcode) {
 		case KEY_TYPED:

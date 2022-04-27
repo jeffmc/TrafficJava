@@ -64,6 +64,7 @@ public class TrafficSimulation {
 				switch (e.button()) {
 				case Event.BUTTON1:
 					dragMode = SELECT_MODE;
+//					mstart.set((e.x()-cam.x)/cam.z, (e.y()-cam.y)/cam.z);
 					mstart.set(e.x()-cam.x, e.y()-cam.y);
 					mnow.set(mstart);
 					break;
@@ -87,6 +88,7 @@ public class TrafficSimulation {
 			case Event.MOUSE_DRAGGED:
 				switch (dragMode) {
 				case SELECT_MODE:
+//					mnow.set((e.x()-cam.x)/cam.z, (e.y()-cam.y)/cam.z);
 					mnow.set(e.x()-cam.x, e.y()-cam.y);
 					break;
 				case CAM_MODE:
@@ -94,6 +96,8 @@ public class TrafficSimulation {
 					cam.y = coy - csy + e.y();
 					break;
 				}
+				break;
+			case Event.MOUSE_WHEEL_MOVED:
 				break;
 			}
 		}

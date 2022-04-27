@@ -29,12 +29,14 @@ public class CameraGraphics {
 	
 	// Rect
 	public void drawRect(int x, int y, int w, int h) {
+//		g.drawRect((x+cam.x)*cam.z,(y+cam.y)*cam.z,w*cam.z,h*cam.z);
 		g.drawRect(x+cam.x,y+cam.y,w,h);
 	}
 	public void drawOverlayRect(int x, int y, int w, int h) {
 		g.drawRect(x,y,w,h);
 	}
 	public void fillRect(int x, int y, int w, int h) {
+//		g.fillRect((x+cam.x)*cam.z,(y+cam.y)*cam.z,w*cam.z,h*cam.z);
 		g.fillRect(x+cam.x,y+cam.y,w,h);
 	}
 	public void fillOverlayRect(int x, int y, int w, int h) {
@@ -42,7 +44,7 @@ public class CameraGraphics {
 	}
 
 	// Text
-	public void drawString(String str, int x, int y) { // Overlays are non-transformed
+	public void drawString(String str, int x, int y) { // Not zoomed
 		g.drawString(str, x+cam.x,y+cam.y);
 	}
 	public void drawOverlayString(String str, int x, int y) { // Overlays are non-transformed
