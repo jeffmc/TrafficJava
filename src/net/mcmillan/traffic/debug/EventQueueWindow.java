@@ -1,4 +1,4 @@
-package net.mcmillan.traffic.event;
+package net.mcmillan.traffic.debug;
 
 import java.awt.Dimension;
 import java.awt.FlowLayout;
@@ -15,6 +15,9 @@ import javax.swing.JScrollPane;
 import javax.swing.ListModel;
 import javax.swing.event.ListDataEvent;
 import javax.swing.event.ListDataListener;
+
+import net.mcmillan.traffic.event.Event;
+import net.mcmillan.traffic.event.EventQueue;
 
 public class EventQueueWindow {
 	
@@ -104,7 +107,7 @@ public class EventQueueWindow {
 			if (eq == null) throw new IllegalArgumentException("Queue cannot be null");
 			eq.addObserver(this);
 		}
-		void dispose() {
+		public void dispose() {
 			eq.removeObserver(this);
 			listeners = null;
 		}

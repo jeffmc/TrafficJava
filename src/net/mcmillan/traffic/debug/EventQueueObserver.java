@@ -1,4 +1,6 @@
-package net.mcmillan.traffic.event;
+package net.mcmillan.traffic.debug;
+
+import net.mcmillan.traffic.event.Event;
 
 public interface EventQueueObserver {
 

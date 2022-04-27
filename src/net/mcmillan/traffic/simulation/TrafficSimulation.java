@@ -56,7 +56,8 @@ public class TrafficSimulation {
 	private int cox, coy, csx, csy;
 	
 	public void pollEvents() {
-		while (!eventq.isEmpty()) {
+		eventq.unload();
+		while (!eventq.unloadedEmpty()) {
 			Event e = eventq.pop();
 			switch (e.code) {
 			case Event.MOUSE_PRESSED:

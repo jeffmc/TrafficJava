@@ -15,9 +15,9 @@ import java.awt.event.MouseWheelEvent;
 import java.awt.event.MouseWheelListener;
 import java.awt.image.BufferStrategy;
 
+import net.mcmillan.traffic.debug.EventQueueWindow;
 import net.mcmillan.traffic.event.Event;
 import net.mcmillan.traffic.event.EventQueue;
-import net.mcmillan.traffic.event.EventQueueWindow;
 import net.mcmillan.traffic.math.IVec2;
 
 public class RenderableCanvas {
@@ -37,14 +37,14 @@ public class RenderableCanvas {
 	private MouseMotionListener mouseMotionListener;
 	private MouseWheelListener mouseWheelListener;
 	private EventQueue eventq;
-	private EventQueueWindow eqw;
+//	private EventQueueWindow eqw;
 	
 	public RenderableCanvas() {
 		canvas = new Canvas();
 
 		eventq = new EventQueue();
-		eqw = new EventQueueWindow(eventq);
-		eqw.setVisible(true);
+//		eqw = new EventQueueWindow(eventq);
+//		eqw.setVisible(true);
 		
 		setupCanvas(new Dimension(1152, 648));
 		updateSizeVec();
@@ -127,7 +127,7 @@ public class RenderableCanvas {
 	
 	public void setEventQueue(EventQueue eq) {
 		eventq = eq;
-		eqw.setEventQueue(eventq);
+//		eqw.setEventQueue(eventq);
 		if (eventq != null) {
 			canvas.addKeyListener(keyListener);
 			canvas.addMouseListener(mouseListener);

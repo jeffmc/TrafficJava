@@ -27,7 +27,7 @@ public class QuadtreeNode {
 		ArrayList<QuadtreeNode> level = new ArrayList<>();
 		level.add(root);
 		int depth = 0;
-		Random r = new Random();
+		Random r = new Random(1231234); // Defined seed for consistency in TESTING
 		while (depth < maxDepth) {
 			ArrayList<QuadtreeNode> nextLevel = new ArrayList<>();
 			for (QuadtreeNode n : level) {

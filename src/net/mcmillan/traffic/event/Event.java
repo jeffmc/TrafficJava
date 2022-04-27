@@ -36,7 +36,7 @@ public class Event {
 	
 	public int x() {
 		switch (code) {
-		case MOUSE_RELEASED, MOUSE_PRESSED, MOUSE_EXITED, MOUSE_ENTERED, MOUSE_CLICKED, MOUSE_MOVED, MOUSE_DRAGGED, MOUSE_WHEEL_MOVED:
+		case MOUSE_RELEASED: case MOUSE_PRESSED: case MOUSE_EXITED: case MOUSE_ENTERED: case MOUSE_CLICKED: case MOUSE_MOVED: case MOUSE_DRAGGED: case MOUSE_WHEEL_MOVED:
 			return (int) data[0];
 		default:
 			throw new IllegalArgumentException(eventTypeFromCode(code) + " doesn't have x component!");
@@ -44,7 +44,7 @@ public class Event {
 	}
 	public int y() {
 		switch (code) {
-		case MOUSE_RELEASED, MOUSE_PRESSED, MOUSE_EXITED, MOUSE_ENTERED, MOUSE_CLICKED, MOUSE_MOVED, MOUSE_DRAGGED, MOUSE_WHEEL_MOVED:
+		case MOUSE_RELEASED: case MOUSE_PRESSED: case MOUSE_EXITED: case MOUSE_ENTERED: case MOUSE_CLICKED: case MOUSE_MOVED: case MOUSE_DRAGGED: case MOUSE_WHEEL_MOVED:
 			return (int) data[1];
 		default:
 			throw new IllegalArgumentException(eventTypeFromCode(code) + " doesn't have y component!");
@@ -52,7 +52,7 @@ public class Event {
 	}
 	public int button() {
 		switch (code) {
-		case MOUSE_RELEASED, MOUSE_PRESSED, MOUSE_EXITED, MOUSE_ENTERED, MOUSE_CLICKED, MOUSE_MOVED, MOUSE_DRAGGED:
+		case MOUSE_RELEASED: case MOUSE_PRESSED: case MOUSE_EXITED: case MOUSE_ENTERED: case MOUSE_CLICKED: case MOUSE_MOVED: case MOUSE_DRAGGED:
 			return (int) data[2];
 		default:
 			throw new IllegalArgumentException(eventTypeFromCode(code) + " doesn't have button component!");
