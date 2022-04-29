@@ -23,6 +23,8 @@ public class TrafficSimulation {
 	private Camera cam = new Camera();
 	public Camera getCamera() { return cam; }
 	
+	public Vehicle[] vehicles;
+	
 	public TrafficSimulation() {
 		quadtree = QuadtreeNode.randomize(IVec2.make(1024, 512), 8);
 	}
@@ -32,11 +34,16 @@ public class TrafficSimulation {
 	public void start() {
 		if (running) throw new IllegalStateException("Can't start an already active simulation!");
 		running = true;
+		vehicles = new Vehicle[20];
+		for (int i=0;i<vehicles.length;i++) {
+			vehicles[i] = new Vehicle(IVec2.make((int)(Math.random()*10)+10, (int)(Math.random()*500)), IVec2.make(30, 20));
+		}
 	}
 	
 	public void stop() {
 		if (!running) throw new IllegalStateException("Can't stop inactive simulation!");
 		running = false;
+		vehicles = null;
 	}
 	
 	private long ticks = 0;

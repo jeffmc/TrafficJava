@@ -4,6 +4,7 @@ import java.awt.Color;
 
 import net.mcmillan.traffic.math.IVec2;
 import net.mcmillan.traffic.simulation.TrafficSimulation;
+import net.mcmillan.traffic.simulation.Vehicle;
 
 public class TrafficRenderer {
 
@@ -48,6 +49,9 @@ public class TrafficRenderer {
 		// Draw mouse
 		cg.setColor(Color.white);
 		cg.drawRect(mr[0].x(), mr[0].y(), mr[1].x(), mr[1].y());
+		
+		if (scene != null) 
+			for (Vehicle v : scene.vehicles) v.draw(cg);
 		
 		drawTargetDimensions(cg, delta);
 	}
