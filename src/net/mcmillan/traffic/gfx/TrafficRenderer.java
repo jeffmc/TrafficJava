@@ -65,9 +65,13 @@ public class TrafficRenderer {
 		cg.drawRect(mr[0].x(), mr[0].y(), mr[1].x(), mr[1].y());
 		
 		if (scene != null) 
-			for (Vehicle v : scene.vehicles) v.draw(cg);
+			drawScene(cg, scene);
 		
 		drawTargetDimensions(cg, delta);
+	}
+	
+	private void drawScene(CameraGraphics cg, TrafficSimulation sim) {
+		for (Vehicle v : scene.highway.vehicles) v.draw(cg);
 	}
 	
 	private void drawTargetDimensions(CameraGraphics cg, long delta) {

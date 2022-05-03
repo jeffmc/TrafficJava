@@ -6,6 +6,7 @@ import java.util.LinkedHashSet;
 import java.util.Random;
 
 import net.mcmillan.traffic.gfx.CameraGraphics;
+import net.mcmillan.traffic.math.ITransform2D;
 import net.mcmillan.traffic.math.IVec2;
 import net.mcmillan.traffic.simulation.Vehicle;
 
@@ -13,10 +14,10 @@ public class QuadtreeNode {
 
 	private QuadtreeNode parent;
 	private QuadtreeNode[] children;
-	private IVec2 size, position;
+	private ITransform2D transform;
 	
-	public IVec2 size() { return size; }
-	public IVec2 position() { return position; }
+	public IVec2 size() { return transform.size; }
+	public IVec2 position() { return transform.pos; }
 	
 	public static final Color debugGreen = new Color(0,200,0);
 	public Color color = debugGreen; // new Color((int)(Math.random() * Integer.MAX_VALUE));
@@ -55,7 +56,7 @@ public class QuadtreeNode {
 				n.draw(cg);
 		} else { 
 			cg.setColor(color);
-			cg.drawRect(position.x(), position.y(), size.x(), size.y());
+			cg.drawRect(transform.x(), transform.y(), transform.w(), transform.h());
 		}
 	}
 	
@@ -73,13 +74,12 @@ public class QuadtreeNode {
 	
 	private QuadtreeNode(QuadtreeNode parent, IVec2 size, IVec2 position) {
 		this.parent = parent;
-		this.size = size;
-		this.position = position;
+		this.transform = new ITransform2D(position, size);
 	}
 	
 	public boolean testAndAdd(Vehicle v) {
 		boolean added = false;
-		if (IVec2.rectIntersect(v.pos, v.size, this.position, this.size)) {
+		if (ITransform2D.intersects(v.transform, this.transform)) {
 			if (this.isLeaf()) {
 				linkedVehicles.add(v);
 				added |= true;
@@ -90,16 +90,16 @@ public class QuadtreeNode {
 			}
 		}
 		return added;
-			
 	}
 	
 	public void split() {
-		IVec2 hsize = size.copy().div(2);
+		IVec2 hsz = transform.size.copy().div(2); // Half-size
+		IVec2 pos = transform.pos; // Position
 		children = new QuadtreeNode[4];
-		children[0] = new QuadtreeNode(this, hsize, position.copy());
-		children[1] = new QuadtreeNode(this, hsize, position.copy().add(hsize.x(), 0));
-		children[2] = new QuadtreeNode(this, hsize, position.copy().add(0, hsize.y()));
-		children[3] = new QuadtreeNode(this, hsize, position.copy().add(hsize));
+		children[0] = new QuadtreeNode(this, hsz, pos.copy());
+		children[1] = new QuadtreeNode(this, hsz, pos.copy().add(hsz.x(), 0));
+		children[2] = new QuadtreeNode(this, hsz, pos.copy().add(0, hsz.y()));
+		children[3] = new QuadtreeNode(this, hsz, pos.copy().add(hsz));
 //		for (QuadTreeNode n : children) {
 //			for (Vehicle v : linkedVehicles)
 //				if (n.intersects(v)) n.addVehicle(v); // don't have these add functions check intersection

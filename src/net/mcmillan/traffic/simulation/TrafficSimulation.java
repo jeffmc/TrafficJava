@@ -1,8 +1,5 @@
 package net.mcmillan.traffic.simulation;
 
-import java.util.ArrayList;
-import java.util.function.Predicate;
-
 import net.mcmillan.traffic.event.Event;
 import net.mcmillan.traffic.event.EventQueue;
 import net.mcmillan.traffic.gfx.Camera;
@@ -11,11 +8,13 @@ import net.mcmillan.traffic.physics.QuadtreeNode;
 
 public class TrafficSimulation {
 
+	// State
 	private boolean running = false;
-	
-	private QuadtreeNode quadtree;
-	
-	public QuadtreeNode getQuadtreeRoot() { return quadtree; }
+	private boolean paused = false;
+	private boolean stepOnce = false;
+	public void pause() { paused = true; }
+	public void play() { paused = false; }
+	public void step() { stepOnce = true; }
 	
 	private EventQueue eventq = new EventQueue();
 	public EventQueue getEventQueue() { return eventq; }
@@ -25,33 +24,33 @@ public class TrafficSimulation {
 	private Camera cam = new Camera();
 	public Camera getCamera() { return cam; }
 	
-	public ArrayList<Vehicle> vehicles;
+	public Highway highway;
+	public QuadtreeNode getQuadtreeRoot() { return highway.getQuadtreeRoot(); }
 	
 	public TrafficSimulation() {
+		highway = new Highway();
 	}
 	
 	public boolean isRunning() { return running; }
+	public boolean isPaused() { return paused; }
 	
 	public void start() {
 		if (running) throw new IllegalStateException("Can't start an already active simulation!");
 		running = true;
-		quadtree = QuadtreeNode.randomize(IVec2.make(1024, 512), 8);
-		vehicles = new ArrayList<>();
+		highway = new Highway();
 		for (int i=0;i<5;i++) {
 			addCar();
 		}
 	}
 	
 	public void addCar() {
-		Vehicle v = new Vehicle(IVec2.make((int)(-Math.random()*50)-50, (int)(Math.random()*500)), IVec2.make(30, 20));
-		vehicles.add(v);
-		quadtree.testAndAdd(v);
+		highway.addCar();
 	}
 	
 	public void stop() {
 		if (!running) throw new IllegalStateException("Can't stop inactive simulation!");
 		running = false;
-		vehicles = null;
+		highway = null;
 	}
 	
 	private long ticks = 0;
@@ -60,8 +59,11 @@ public class TrafficSimulation {
 	public void tick(long delta) {
 		if (!running) throw new IllegalStateException("Can't tick inactive simulation!");
 		pollEvents(); // Run this before any update code.
-		update(delta);
-		ticks++;
+		if ((!paused) || stepOnce) {
+			update(delta);
+			ticks++;
+			stepOnce = false;
+		}
 	}
 
 	private int dragMode = -1;
@@ -116,15 +118,12 @@ public class TrafficSimulation {
 				break;
 			}
 		}
+		msize.set(mstart).sub(mnow).abs();
+		mtl.set(mstart).min(mnow);
 	}
 	
 	public void update(long delta) {
-		msize.set(mstart).sub(mnow).abs();
-		mtl.set(mstart).min(mnow);
-		
-		int qw = quadtree.size().x();
-		vehicles.removeIf((v) -> v.pos.x() > qw);
-		
+		highway.update(delta);
 	}
 	
 	public IVec2[] getMouseRect() {

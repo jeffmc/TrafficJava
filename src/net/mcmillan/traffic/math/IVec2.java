@@ -102,8 +102,7 @@ public class IVec2 { // TODO: Add immutable vectors for sending through events
 		return (ap.x() < bp.x() + bs.x() &&
 	    ap.x() + as.x() > bp.x() &&
 	    ap.y() < bp.y() + bs.y() &&
-	    ap.y() + as.y() > bp.y());
-				
+	    ap.y() + as.y() > bp.y());		
 	}
 	
 }
