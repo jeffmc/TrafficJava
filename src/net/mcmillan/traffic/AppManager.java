@@ -1,16 +1,17 @@
 package net.mcmillan.traffic;
 
-import net.mcmillan.traffic.gfx.TrafficRenderer;
 import net.mcmillan.traffic.gfx.AppWindow;
-import net.mcmillan.traffic.simulation.CollisionException;
+import net.mcmillan.traffic.gfx.ControlPanel;
+import net.mcmillan.traffic.gfx.TrafficRenderer;
 import net.mcmillan.traffic.simulation.TrafficFactory;
 import net.mcmillan.traffic.simulation.TrafficSimulation;
 
 public class AppManager {
 
-	TrafficSimulation sim;
-	TrafficRenderer renderer;
-	AppWindow window;
+	private TrafficSimulation sim;
+	private TrafficRenderer renderer;
+	private AppWindow window;
+	private ControlPanel controlPanel;
 	
 	private static AppManager instance;
 	public static AppManager getSingleton() { return instance; }
@@ -26,11 +27,17 @@ public class AppManager {
 
 	private void setup() {
 		window = new AppWindow();
+		controlPanel = new ControlPanel();
 		
 		sim = TrafficFactory.generate();
+		
 		renderer = new TrafficRenderer();
 		renderer.setScene(sim);
 		renderer.setTarget(window.getCanvas());
+		
+		controlPanel.setSimulation(sim);
+		
+//		renderer.addMonitor(() -> "Stalls: " + sim.getEventQueue().getStalls());
 	}
 
 	private void loop() {

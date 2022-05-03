@@ -2,10 +2,12 @@ package net.mcmillan.traffic.physics;
 
 import java.awt.Color;
 import java.util.ArrayList;
+import java.util.LinkedHashSet;
 import java.util.Random;
 
 import net.mcmillan.traffic.gfx.CameraGraphics;
 import net.mcmillan.traffic.math.IVec2;
+import net.mcmillan.traffic.simulation.Vehicle;
 
 public class QuadtreeNode {
 
@@ -13,9 +15,13 @@ public class QuadtreeNode {
 	private QuadtreeNode[] children;
 	private IVec2 size, position;
 	
-	public Color color = new Color((int)(Math.random() * Integer.MAX_VALUE));
+	public IVec2 size() { return size; }
+	public IVec2 position() { return position; }
 	
-//	public LinkedHashSet<Vehicle> linkedVehicles; // null unless leaf
+	public static final Color debugGreen = new Color(0,200,0);
+	public Color color = debugGreen; // new Color((int)(Math.random() * Integer.MAX_VALUE));
+	
+	public LinkedHashSet<Vehicle> linkedVehicles; // null unless leaf
 //	public LinkedHashSet<Road> linkedRoads; // null unless leaf
 	
 	public static QuadtreeNode root(IVec2 size) {
@@ -43,17 +49,13 @@ public class QuadtreeNode {
 		return root;
 	}
 	
-	public void draw(CameraGraphics cg, IVec2[] mr) {
+	public void draw(CameraGraphics cg) {
 		if (children != null) {
 			for (QuadtreeNode n : children)
-				n.draw(cg, mr);
+				n.draw(cg);
 		} else { 
 			cg.setColor(color);
-			if (IVec2.rectIntersect(position, size, mr[0], mr[1])) {
-				cg.fillRect(position.x(), position.y(), size.x(), size.y());
-			} else {
-				cg.drawRect(position.x(), position.y(), size.x(), size.y());
-			}
+			cg.drawRect(position.x(), position.y(), size.x(), size.y());
 		}
 	}
 	
@@ -73,6 +75,22 @@ public class QuadtreeNode {
 		this.parent = parent;
 		this.size = size;
 		this.position = position;
+	}
+	
+	public boolean testAndAdd(Vehicle v) {
+		boolean added = false;
+		if (IVec2.rectIntersect(v.pos, v.size, this.position, this.size)) {
+			if (this.isLeaf()) {
+				linkedVehicles.add(v);
+				added |= true;
+			} else {
+				for (QuadtreeNode n : children) {
+					added |= n.testAndAdd(v);
+				}
+			}
+		}
+		return added;
+			
 	}
 	
 	public void split() {

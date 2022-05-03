@@ -20,6 +20,7 @@ public class Vehicle {
 	}
 	
 	public void draw(CameraGraphics g) {
+		pos.add(1, 0);
 		g.setColor(color);
 		g.fillRect(pos.x(), pos.y(), size.x(), size.y());
 	}

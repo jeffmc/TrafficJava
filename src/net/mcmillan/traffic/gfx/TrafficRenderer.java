@@ -1,6 +1,7 @@
 package net.mcmillan.traffic.gfx;
 
 import java.awt.Color;
+import java.util.ArrayList;
 
 import net.mcmillan.traffic.math.IVec2;
 import net.mcmillan.traffic.simulation.TrafficSimulation;
@@ -11,6 +12,16 @@ public class TrafficRenderer {
 	private TrafficSimulation scene;
 	private RenderableCanvas target;
 	private CameraGraphics cameraGfx = new CameraGraphics();
+	
+	private ArrayList<Monitorable> monitors = new ArrayList<>();
+	
+	private long delta = 0;
+	
+	public TrafficRenderer() {
+		addMonitor(() -> "[" + target.getWidth() + ", " + target.getHeight() + "]");
+		addMonitor(() -> "Ticks: " + scene.ticks());
+		addMonitor(() -> "Delta: " + delta);
+	}
 	
 	public void setScene(TrafficSimulation sim) {
 		scene = sim;
@@ -31,8 +42,9 @@ public class TrafficRenderer {
 		cameraGfx.setCamera(c);
 	}
 	
-	public void draw(long delta) {
+	public void draw(long d) {
 		cameraGfx.setGraphics(target.getGraphics());
+		delta = d;
 		intl_draw(cameraGfx, delta);
 		target.showBuffer();
 	}
@@ -44,7 +56,9 @@ public class TrafficRenderer {
 
 		// Draw quadtree!
 		IVec2[] mr = scene.getMouseRect();
-		scene.getQuadtreeRoot().draw(cg, mr);
+//		long start = System.currentTimeMillis();
+		scene.getQuadtreeRoot().draw(cg);
+//		System.out.println("Drawing quadtree took " + (System.currentTimeMillis() - start) + "ms");
 
 		// Draw mouse
 		cg.setColor(Color.white);
@@ -58,9 +72,20 @@ public class TrafficRenderer {
 	
 	private void drawTargetDimensions(CameraGraphics cg, long delta) {
 		cg.setColor(Color.white);
-		cg.drawOverlayString("[" + target.getWidth() + ", " + target.getHeight() + "]", 2, 12);
-		cg.drawOverlayString("Ticks: " + scene.ticks(), 2, 24);
-		cg.drawOverlayString("Delta: " + delta, 2, 36);
+		int x = 2, y = 1, yf = 12;
+		for (Monitorable m : monitors) 
+			cg.drawOverlayString(m.get(), x, y++*yf);
+	}
+	
+	public void addMonitor(Monitorable m) {
+		monitors.add(m);
+	}
+	public boolean removeMonitor(Monitorable m) {
+		return monitors.remove(m);
+	}
+	
+	public interface Monitorable {
+		public String get();
 	}
 	
 }

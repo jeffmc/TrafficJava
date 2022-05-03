@@ -1,5 +1,6 @@
 package net.mcmillan.traffic.gfx;
 
+import java.awt.BorderLayout;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 
@@ -17,7 +18,6 @@ public class AppWindow {
 	
 	public AppWindow() {
 		frame = new JFrame("Traffic Simulation");
-		
 		canvas = new RenderableCanvas();
 		
 		frame.setResizable(true);
@@ -29,11 +29,13 @@ public class AppWindow {
 			}
 		});
 		
-		frame.add(canvas.getAWTCanvas());
+		frame.add(canvas.getAWTCanvas(), BorderLayout.CENTER);
+		
  		frame.pack(); // necessary to validate components for buffer functions below
 		
 		// Set visible in center of screen
 		frame.setLocationRelativeTo(null);
+		frame.repaint();
 		frame.setVisible(true);
 		
 		canvas.makeBuffers();

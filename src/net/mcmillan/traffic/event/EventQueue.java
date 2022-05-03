@@ -10,10 +10,12 @@ public class EventQueue {
 
 	private LinkedList<Event> queue;
 	private LinkedList<Event> unloaded;
-	private AtomicBoolean unloading = new AtomicBoolean(false);
-	
+	private AtomicBoolean unloading = new AtomicBoolean(false); // attempt at making this thread-safe, not entirely sure
 	
 	private ArrayList<EventQueueObserver> observers;
+	
+	private long stalledForUnloading = 0;
+	public long getStalls() { return stalledForUnloading; }
 	
 	public EventQueue() {
 		queue = new LinkedList<>();
@@ -32,9 +34,8 @@ public class EventQueue {
 	// Adds event to the end of queue
 	public void push(Event e) {
 		if (unloading.get()) {
-			long start = System.nanoTime();
+			stalledForUnloading++;
 			while (unloading.get()) { } // This is atrocious code
-			System.out.println(System.nanoTime()-start + " waited!");;
 		}
 		queue.add(e);
 		for (EventQueueObserver o : observers)

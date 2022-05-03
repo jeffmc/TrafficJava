@@ -1,5 +1,8 @@
 package net.mcmillan.traffic.simulation;
 
+import java.util.ArrayList;
+import java.util.function.Predicate;
+
 import net.mcmillan.traffic.event.Event;
 import net.mcmillan.traffic.event.EventQueue;
 import net.mcmillan.traffic.gfx.Camera;
@@ -15,7 +18,6 @@ public class TrafficSimulation {
 	public QuadtreeNode getQuadtreeRoot() { return quadtree; }
 	
 	private EventQueue eventq = new EventQueue();
-		
 	public EventQueue getEventQueue() { return eventq; }
 	
 	public IVec2 mstart = IVec2.make(), mnow = IVec2.make(), msize = IVec2.make(), mtl = IVec2.make();
@@ -23,10 +25,9 @@ public class TrafficSimulation {
 	private Camera cam = new Camera();
 	public Camera getCamera() { return cam; }
 	
-	public Vehicle[] vehicles;
+	public ArrayList<Vehicle> vehicles;
 	
 	public TrafficSimulation() {
-		quadtree = QuadtreeNode.randomize(IVec2.make(1024, 512), 8);
 	}
 	
 	public boolean isRunning() { return running; }
@@ -34,10 +35,17 @@ public class TrafficSimulation {
 	public void start() {
 		if (running) throw new IllegalStateException("Can't start an already active simulation!");
 		running = true;
-		vehicles = new Vehicle[20];
-		for (int i=0;i<vehicles.length;i++) {
-			vehicles[i] = new Vehicle(IVec2.make((int)(Math.random()*10)+10, (int)(Math.random()*500)), IVec2.make(30, 20));
+		quadtree = QuadtreeNode.randomize(IVec2.make(1024, 512), 8);
+		vehicles = new ArrayList<>();
+		for (int i=0;i<5;i++) {
+			addCar();
 		}
+	}
+	
+	public void addCar() {
+		Vehicle v = new Vehicle(IVec2.make((int)(-Math.random()*50)-50, (int)(Math.random()*500)), IVec2.make(30, 20));
+		vehicles.add(v);
+		quadtree.testAndAdd(v);
 	}
 	
 	public void stop() {
@@ -113,6 +121,10 @@ public class TrafficSimulation {
 	public void update(long delta) {
 		msize.set(mstart).sub(mnow).abs();
 		mtl.set(mstart).min(mnow);
+		
+		int qw = quadtree.size().x();
+		vehicles.removeIf((v) -> v.pos.x() > qw);
+		
 	}
 	
 	public IVec2[] getMouseRect() {
