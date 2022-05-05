@@ -50,14 +50,12 @@ public class TrafficRenderer {
 	}
 	
 	private void intl_draw(CameraGraphics cg, long delta) {
-		// Background
-		cg.setColor(Color.black);
-		cg.fillOverlayRect(0, 0, target.getWidth(), target.getHeight());
+		drawBackground(cg);
 
 		// Draw quadtree!
 		IVec2[] mr = scene.getMouseRect();
 //		long start = System.currentTimeMillis();
-		scene.getQuadtreeRoot().draw(cg);
+//		scene.getQuadtreeRoot().draw(cg);
 //		System.out.println("Drawing quadtree took " + (System.currentTimeMillis() - start) + "ms");
 
 		// Draw mouse
@@ -68,6 +66,23 @@ public class TrafficRenderer {
 			drawScene(cg, scene);
 		
 		drawTargetDimensions(cg, delta);
+	}
+	
+	private static final Color background = new Color(0,0,0), gridLines = new Color(45,45,45);
+	private static final int gridSize = 25;
+	private void drawBackground(CameraGraphics cg) {
+		int w = target.getWidth(), h = target.getHeight();
+		int lbound = cg.camX(), rbound = lbound + w, tbound = cg.camY(), bbound = tbound + h;
+		// Background
+		cg.setColor(background);
+		cg.fillOverlayRect(0, 0, w, h);
+		cg.setColor(gridLines);
+		for (int x=(lbound/gridSize)*gridSize;x<rbound;x+=gridSize) {
+			cg.drawLine(x,tbound,x,bbound);
+		}
+		for (int y=(tbound/gridSize)*gridSize;y<bbound;y+=gridSize) {
+			cg.drawLine(lbound,y,rbound,y);
+		}
 	}
 	
 	private void drawScene(CameraGraphics cg, TrafficSimulation sim) {

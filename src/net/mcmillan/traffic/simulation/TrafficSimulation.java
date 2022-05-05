@@ -70,7 +70,7 @@ public class TrafficSimulation {
 	private static final int SELECT_MODE = 1;
 	private static final int CAM_MODE = 0;
 	
-	private int cox, coy, csx, csy;
+	private int cox, coy, msx, msy;
 	
 	public void pollEvents() {
 		eventq.unload();
@@ -81,16 +81,15 @@ public class TrafficSimulation {
 				switch (e.button()) {
 				case Event.BUTTON1:
 					dragMode = SELECT_MODE;
-//					mstart.set((e.x()-cam.x)/cam.z, (e.y()-cam.y)/cam.z);
-					mstart.set(e.x()-cam.x, e.y()-cam.y);
+					mstart.set(e.x()+cam.x, e.y()+cam.y); // Convert from screen -> world coords
 					mnow.set(mstart);
 					break;
 				case Event.BUTTON2:
 					dragMode = CAM_MODE;
 					cox = cam.x;
 					coy = cam.y;
-					csx = e.x();
-					csy = e.y();
+					msx = e.x();
+					msy = e.y();
 					break;
 				}
 				break;
@@ -109,8 +108,8 @@ public class TrafficSimulation {
 					mnow.set(e.x()-cam.x, e.y()-cam.y);
 					break;
 				case CAM_MODE:
-					cam.x = cox - csx + e.x();
-					cam.y = coy - csy + e.y();
+					cam.x = cox + msx - e.x();
+					cam.y = coy + msy - e.y();
 					break;
 				}
 				break;
