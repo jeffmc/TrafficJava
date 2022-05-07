@@ -81,7 +81,7 @@ public class TrafficSimulation {
 				switch (e.button()) {
 				case Event.BUTTON1:
 					dragMode = SELECT_MODE;
-					mstart.set(e.x()+cam.x, e.y()+cam.y); // Convert from screen -> world coords
+					mstart.set(e.x()-cam.x, e.y()-cam.y); // Convert from screen -> world coords
 					mnow.set(mstart);
 					break;
 				case Event.BUTTON2:
