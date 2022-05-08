@@ -21,8 +21,17 @@ public class ITransform2D {
 	public int width() { return size.x(); }
 	public int height() { return size.y(); }
 	
+	public ITransform2D copy() { return new ITransform2D(pos.copy(), size.copy()); }
+	
 	public int cx() { return this.x() + this.width()/2; }
 	public int cy() { return this.y() + this.height()/2; }
+	
+	public ITransform2D offset(int o) {
+		pos.add(-o, -o);
+		int doubleo = 2*o;
+		size.add(doubleo, doubleo);
+		return this;
+	}
 	
 	public static boolean intersects(ITransform2D a, ITransform2D b) {
 		return (a.x() < b.x() + b.w() &&

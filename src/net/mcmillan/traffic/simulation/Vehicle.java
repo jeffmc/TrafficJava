@@ -7,14 +7,21 @@ import net.mcmillan.traffic.math.ITransform2D;
 import net.mcmillan.traffic.math.IVec2;
 
 public class Vehicle {
+	public static final Color BRAKING_COLOR = new Color(255, 0, 0), 
+			NEUTRAL_COLOR = new Color(0,0,255),
+			ACCEL_COLOR = new Color(0,255,0),
+			SELECTED_COLOR = new Color(255,255,0);
 	
-	public static final Color BRAKING = new Color(255, 0, 0), NEUTRAL = new Color(255,255,0), ACCEL = new Color(0,255,0);
-	
-	public Color forceColor = NEUTRAL;
+	public Color forceColor = NEUTRAL_COLOR;
 	public Color color = new Color((int)(Math.random() * Integer.MAX_VALUE));
 	public ITransform2D transform;
+	public int speed = 1;
 	public int topSpeed = 4;
 	public double power = 0.05, brake = 0.03;
+	
+	private boolean selected = false;
+	public void setSelected(boolean b) { selected = b; }
+	public boolean isSelected() { return selected; }
 	
 	public Vehicle() {
 		this(IVec2.make(10,10), IVec2.make(42,16));
@@ -25,14 +32,18 @@ public class Vehicle {
 	}
 	
 	public void tick(long delta) {
-		transform.pos.add(1, 0);
+		transform.pos.add(speed, 0);
 	}
 	
 	public void draw(CameraGraphics g) {
 		g.setColor(color);
-		g.fillRect(transform.x(), transform.y(), transform.w(), transform.h());
+		g.fillRect(transform);
 		g.setColor(forceColor);
-		g.drawRect(transform.x(), transform.y(), transform.w(), transform.h());
+		g.drawRect(transform);
+		if (selected) {
+			g.setColor(SELECTED_COLOR);
+			g.drawRect(transform.copy().offset(3));
+		}
 	}
 	
 }

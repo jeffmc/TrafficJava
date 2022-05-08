@@ -3,6 +3,7 @@ package net.mcmillan.traffic.simulation;
 import net.mcmillan.traffic.event.Event;
 import net.mcmillan.traffic.event.EventQueue;
 import net.mcmillan.traffic.gfx.Camera;
+import net.mcmillan.traffic.math.ITransform2D;
 import net.mcmillan.traffic.math.IVec2;
 import net.mcmillan.traffic.physics.QuadtreeNode;
 
@@ -19,17 +20,13 @@ public class TrafficSimulation {
 	private EventQueue eventq = new EventQueue();
 	public EventQueue getEventQueue() { return eventq; }
 	
-	public IVec2 mstart = IVec2.make(), mnow = IVec2.make(), msize = IVec2.make(), mtl = IVec2.make();
+	public IVec2 mstart = IVec2.make(), mnow = IVec2.make(), msize = IVec2.make(), morigin = IVec2.make();
 	
 	private Camera cam = new Camera();
 	public Camera getCamera() { return cam; }
 	
-	public Highway highway;
+	public Highway highway = new Highway();
 	public QuadtreeNode getQuadtreeRoot() { return highway.getQuadtreeRoot(); }
-	
-	public TrafficSimulation() {
-		highway = new Highway();
-	}
 	
 	public boolean isRunning() { return running; }
 	public boolean isPaused() { return paused; }
@@ -37,7 +34,6 @@ public class TrafficSimulation {
 	public void start() {
 		if (running) throw new IllegalStateException("Can't start an already active simulation!");
 		running = true;
-		highway = new Highway();
 		for (int i=0;i<5;i++) {
 			addCar();
 		}
@@ -81,8 +77,8 @@ public class TrafficSimulation {
 				switch (e.button()) {
 				case Event.BUTTON1:
 					dragMode = SELECT_MODE;
-					mstart.set(e.x()-cam.x, e.y()-cam.y); // Convert from screen -> world coords
-					mnow.set(mstart);
+					setMouseNowRelativeToCam(e);
+					mstart.set(mnow);
 					break;
 				case Event.BUTTON2:
 					dragMode = CAM_MODE;
@@ -95,17 +91,11 @@ public class TrafficSimulation {
 				break;
 			case Event.MOUSE_RELEASED:
 				dragMode = -1;
-//				switch (e.button()) {
-//				case Event.BUTTON2:
-//					System.out.println(e.x() + ", " + e.y());
-//					break;
-//				}
 				break;
 			case Event.MOUSE_DRAGGED:
 				switch (dragMode) {
 				case SELECT_MODE:
-//					mnow.set((e.x()-cam.x)/cam.z, (e.y()-cam.y)/cam.z);
-					mnow.set(e.x()-cam.x, e.y()-cam.y);
+					setMouseNowRelativeToCam(e);
 					break;
 				case CAM_MODE:
 					cam.x = cox + msx - e.x();
@@ -118,15 +108,19 @@ public class TrafficSimulation {
 			}
 		}
 		msize.set(mstart).sub(mnow).abs();
-		mtl.set(mstart).min(mnow);
+		morigin.set(mstart).min(mnow);
+	}
+	
+	private void setMouseNowRelativeToCam(Event e) { // Convert from screen -> world coords
+		mnow.set(e.x()+cam.x, e.y()+cam.y);
 	}
 	
 	public void update(long delta) {
 		highway.update(delta);
 	}
 	
-	public IVec2[] getMouseRect() {
-		return new IVec2[] { mtl, msize };
+	public ITransform2D getSelectionTransform() {
+		return new ITransform2D(morigin, msize);
 	}
 
 	// TODO: Implement flagging collisions.

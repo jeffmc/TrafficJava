@@ -3,7 +3,7 @@ package net.mcmillan.traffic.gfx;
 import java.awt.Color;
 import java.util.ArrayList;
 
-import net.mcmillan.traffic.math.IVec2;
+import net.mcmillan.traffic.math.ITransform2D;
 import net.mcmillan.traffic.simulation.TrafficSimulation;
 import net.mcmillan.traffic.simulation.Vehicle;
 
@@ -53,19 +53,19 @@ public class TrafficRenderer {
 		drawBackground(cg);
 
 		// Draw quadtree!
-		IVec2[] mr = scene.getMouseRect();
 //		long start = System.currentTimeMillis();
 //		scene.getQuadtreeRoot().draw(cg);
 //		System.out.println("Drawing quadtree took " + (System.currentTimeMillis() - start) + "ms");
 
-		// Draw mouse
-		cg.setColor(Color.white);
-		cg.drawRect(mr[0].x(), mr[0].y(), mr[1].x(), mr[1].y());
-		
 		if (scene != null) 
 			drawScene(cg, scene);
+
+		// Draw mouse selection rect
+		cg.setColor(Color.white);
+		ITransform2D selection = scene.getSelectionTransform();
+		cg.drawRect(selection);
 		
-		drawTargetDimensions(cg, delta);
+		drawMonitorables(cg, delta);
 	}
 	
 	private static final Color background = new Color(0,0,0), gridLines = new Color(45,45,45);
@@ -89,7 +89,7 @@ public class TrafficRenderer {
 		for (Vehicle v : scene.highway.vehicles) v.draw(cg);
 	}
 	
-	private void drawTargetDimensions(CameraGraphics cg, long delta) {
+	private void drawMonitorables(CameraGraphics cg, long delta) {
 		cg.setColor(Color.white);
 		int x = 2, y = 1, yf = 12;
 		for (Monitorable m : monitors) 

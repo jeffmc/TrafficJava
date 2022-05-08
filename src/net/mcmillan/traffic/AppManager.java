@@ -1,7 +1,7 @@
 package net.mcmillan.traffic;
 
+import net.mcmillan.traffic.debug.ControlPanel;
 import net.mcmillan.traffic.gfx.AppWindow;
-import net.mcmillan.traffic.gfx.ControlPanel;
 import net.mcmillan.traffic.gfx.TrafficRenderer;
 import net.mcmillan.traffic.simulation.TrafficSimulation;
 
@@ -35,7 +35,6 @@ public class AppManager {
 		renderer.setTarget(window.getCanvas());
 		
 		controlPanel.setSimulation(sim);
-		
 //		renderer.addMonitor(() -> "Stalls: " + sim.getEventQueue().getStalls());
 	}
 
