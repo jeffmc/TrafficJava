@@ -6,7 +6,6 @@ import net.mcmillan.traffic.event.EventQueue;
 import net.mcmillan.traffic.gfx.Camera;
 import net.mcmillan.traffic.math.ITransform2D;
 import net.mcmillan.traffic.math.IVec2;
-import net.mcmillan.traffic.physics.QuadtreeNode;
 
 public class TrafficSimulation {
 
@@ -27,7 +26,7 @@ public class TrafficSimulation {
 	public Camera getCamera() { return cam; }
 	
 	public Highway highway = new Highway();
-	public QuadtreeNode getQuadtreeRoot() { return highway.getQuadtreeRoot(); }
+//	public QuadtreeNode getQuadtreeRoot() { return highway.getQuadtreeRoot(); }
 
 	public DebugOptions debugOptions = new DebugOptions();
 	
@@ -66,8 +65,8 @@ public class TrafficSimulation {
 	}
 
 	private int dragMode = -1;
-	private static final int SELECT_MODE = 1;
-	private static final int CAM_MODE = 0;
+	public int getDragMode() { return dragMode; }
+	public static final int DRAG_SELECT_MODE = 1, DRAG_CAM_MODE = 0;
 	
 	private int cox, coy, msx, msy;
 	
@@ -79,12 +78,12 @@ public class TrafficSimulation {
 			case Event.MOUSE_PRESSED:
 				switch (e.button()) {
 				case Event.BUTTON1:
-					dragMode = SELECT_MODE;
+					dragMode = DRAG_SELECT_MODE;
 					setMouseNowRelativeToCam(e);
 					mstart.set(mnow);
 					break;
 				case Event.BUTTON2:
-					dragMode = CAM_MODE;
+					dragMode = DRAG_CAM_MODE;
 					cox = cam.x;
 					coy = cam.y;
 					msx = e.x();
@@ -93,14 +92,19 @@ public class TrafficSimulation {
 				}
 				break;
 			case Event.MOUSE_RELEASED:
+				switch (e.button()) {
+				case Event.BUTTON1:
+					selectMouseArea();
+					break;
+				}
 				dragMode = -1;
 				break;
 			case Event.MOUSE_DRAGGED:
 				switch (dragMode) {
-				case SELECT_MODE:
+				case DRAG_SELECT_MODE:
 					setMouseNowRelativeToCam(e);
 					break;
-				case CAM_MODE:
+				case DRAG_CAM_MODE:
 					cam.x = cox + msx - e.x();
 					cam.y = coy + msy - e.y();
 					break;
@@ -116,6 +120,10 @@ public class TrafficSimulation {
 	
 	private void setMouseNowRelativeToCam(Event e) { // Convert from screen -> world coords
 		mnow.set(e.x()+cam.x, e.y()+cam.y);
+	}
+	
+	private void selectMouseArea() {
+		highway.selectRect(getSelectionTransform());
 	}
 	
 	public void update(long delta) {

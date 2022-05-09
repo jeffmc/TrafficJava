@@ -3,7 +3,6 @@ package net.mcmillan.traffic.gfx;
 import java.awt.Color;
 import java.util.ArrayList;
 
-import net.mcmillan.traffic.debug.DebugOptions;
 import net.mcmillan.traffic.math.ITransform2D;
 import net.mcmillan.traffic.math.IVec2;
 import net.mcmillan.traffic.simulation.TrafficSimulation;
@@ -58,9 +57,11 @@ public class TrafficRenderer {
 			drawScene(cg);
 
 		// Draw mouse selection rect
-		cg.setColor(Color.white);
-		ITransform2D selection = scene.getSelectionTransform();
-		cg.drawRect(selection);
+		if (scene.getDragMode() == TrafficSimulation.DRAG_SELECT_MODE) {
+			cg.setColor(Color.white);
+			ITransform2D selection = scene.getSelectionTransform();
+			cg.drawRect(selection);
+		}
 		
 		drawMonitorables(cg, delta);
 	}
@@ -83,12 +84,12 @@ public class TrafficRenderer {
 	}
 	
 	private void drawScene(CameraGraphics cg) {
-		if (scene.debugOptions.get(DebugOptions.DRAW_QUADTREE)) {
-			scene.getQuadtreeRoot().draw(cg);
-		} else {
-			cg.setColor(Color.LIGHT_GRAY);
-			cg.drawRect(new ITransform2D(IVec2.make(), scene.highway.size));
-		}
+//		if (scene.debugOptions.get(DebugOptions.DRAW_QUADTREE)) {
+//			scene.getQuadtreeRoot().draw(cg);
+//		} else {
+		cg.setColor(Color.LIGHT_GRAY);
+		cg.drawRect(new ITransform2D(IVec2.make(), scene.highway.size));
+//		}
 		for (Vehicle v : scene.highway.vehicles) v.draw(cg);
 	}
 	

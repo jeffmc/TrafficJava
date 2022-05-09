@@ -7,7 +7,7 @@ import javax.swing.table.AbstractTableModel;
 import net.mcmillan.traffic.simulation.Highway;
 import net.mcmillan.traffic.simulation.Vehicle;
 
-public class HighwayTableModel extends AbstractTableModel implements HighwayDataListener {
+public class HighwayTableModel extends AbstractTableModel implements HighwayDataListener { // TODO: Make better model
 	
 	private Highway hw;
 	public HighwayTableModel(Highway h) { 

@@ -50,8 +50,8 @@ public class ControlPanel {
 		frame.add(Box.createVerticalStrut(SECTION_SEPERATION));
 		frame.add(makeStatePane());
 		frame.add(Box.createVerticalStrut(SECTION_SEPERATION));
-		frame.add(makeQuadtreePane());
-		frame.add(Box.createVerticalStrut(SECTION_SEPERATION));
+//		frame.add(makeQuadtreePane());
+//		frame.add(Box.createVerticalStrut(SECTION_SEPERATION));
 		frame.add(makeDebugOptionsPane());
 		frame.add(Box.createVerticalStrut(SECTION_SEPERATION));
 		frame.add(makeTrafficPane());
@@ -118,7 +118,7 @@ public class ControlPanel {
 		pauseBtn.setEnabled(!p);
 	}
 	
-	private JPanel makeQuadtreePane() {
+	/*private JPanel makeQuadtreePane() {
 		JPanel pane = new JPanel();
 		pane.setLayout(new BoxLayout(pane, BoxLayout.PAGE_AXIS));
 		pane.setBorder(BorderFactory.createTitledBorder(BorderFactory.createRaisedBevelBorder(), "Quadtree"));
@@ -138,7 +138,7 @@ public class ControlPanel {
 		pane.add(Box.createVerticalStrut(BUTTON_SEPERATION));
 		pane.add(randomizeBtn);
 		return pane;
-	}
+	}*/
 	
 	private JPanel makeDebugOptionsPane() {
 		JPanel pane = new JPanel();

@@ -1,13 +1,19 @@
 package net.mcmillan.traffic.debug;
 
+import java.util.List;
+
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
+import javax.swing.ListSelectionModel;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
 import javax.swing.table.AbstractTableModel;
 import javax.swing.table.TableModel;
 
 import net.mcmillan.traffic.simulation.TrafficSimulation;
+import net.mcmillan.traffic.simulation.Vehicle;
 
-public class HighwayTable {
+public class HighwayTable implements HighwaySelectionListener {
 
 	private TableModel nullModel = new AbstractTableModel() {
 		@Override public Object getValueAt(int rowIndex, int columnIndex) { return null; }
@@ -32,8 +38,31 @@ public class HighwayTable {
 		sim = s;
 		if (sim != null) {
 			table.setModel(new HighwayTableModel(sim.highway));
+			sim.highway.addSelectionListener(this);
+			ListSelectionModel selModel = table.getSelectionModel();
+			selModel.addListSelectionListener(new ListSelectionListener() {
+				@Override
+				public void valueChanged(ListSelectionEvent e) {
+					sim.highway.selectIndices(selModel.getSelectedIndices()); // TODO: Fix this code, make reactionary rather than rebuilding array every tick from scratch.
+				}
+			});
 		} else {
 			table.setModel(nullModel);
+		}
+	}
+
+	@Override
+	public void selectionChanged(int[] selected) {
+		ListSelectionModel selModel = table.getSelectionModel();
+		selModel.clearSelection();
+		if (selected.length < 2) {
+			if (selected.length == 1) {
+				selModel.setSelectionInterval(selected[0], selected[0]);
+			}
+			return;
+		}
+		for (int i = 0; i < selected.length; i++) {
+			selModel.addSelectionInterval(selected[i], selected[i]); // TODO: Group consecutive intervals and add as groups.
 		}
 	}
 	
