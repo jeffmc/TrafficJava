@@ -2,6 +2,7 @@ package net.mcmillan.traffic.debug;
 
 import java.awt.Component;
 import java.awt.event.ActionListener;
+import java.util.HashMap;
 
 import javax.swing.BorderFactory;
 import javax.swing.Box;
@@ -9,10 +10,7 @@ import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.JTable;
-import javax.swing.table.AbstractTableModel;
-import javax.swing.table.TableModel;
+import javax.swing.JToggleButton;
 
 import net.mcmillan.traffic.simulation.TrafficSimulation;
 
@@ -27,6 +25,7 @@ public class ControlPanel {
 	private TrafficSimulation sim;
 	public void setSimulation(TrafficSimulation s) { 
 		sim = s;
+		updateDebugBtns();
 		updateStateBtns();
 		highwayTable.setSimulation(s);
 	}
@@ -34,11 +33,14 @@ public class ControlPanel {
 	private static final String[] carTypes = new String[] { "Car", "SUV", "Semi" };
 	private JButton[] carBtns = new JButton[carTypes.length];
 	
-	private static final String PLAY_STR = "Play", PAUSE_STR = "Pause", STEP_STR = "Step";
 	private JButton playBtn, pauseBtn, stepBtn;
+	private static final String PLAY_STR = "Play", PAUSE_STR = "Pause", STEP_STR = "Step",
+			MERGE_TO_ROOT_STR = "Merge to Root", MAX_SPLIT_STR = "Split to Max Depth", RANDOMIZE_STR = "Randomize tree";
 	
 	private JPanel trafficPane;
 	private HighwayTable highwayTable;
+	
+	private HashMap<String, JToggleButton> debugBtns = new HashMap<>();
 	
 	public ControlPanel() {
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -47,6 +49,10 @@ public class ControlPanel {
 		frame.add(makeAdderPane());
 		frame.add(Box.createVerticalStrut(SECTION_SEPERATION));
 		frame.add(makeStatePane());
+		frame.add(Box.createVerticalStrut(SECTION_SEPERATION));
+		frame.add(makeQuadtreePane());
+		frame.add(Box.createVerticalStrut(SECTION_SEPERATION));
+		frame.add(makeDebugOptionsPane());
 		frame.add(Box.createVerticalStrut(SECTION_SEPERATION));
 		frame.add(makeTrafficPane());
 		
@@ -58,9 +64,7 @@ public class ControlPanel {
 		JPanel pane = new JPanel();
 		pane.setLayout(new BoxLayout(pane, BoxLayout.LINE_AXIS));
 		pane.setBorder(BorderFactory.createTitledBorder(BorderFactory.createRaisedBevelBorder(), "Add Vehicles"));
-		ActionListener l = (e) -> { // TODO: Make functionality for more classes of vehicles here!
-			sim.addCar();
-		};
+		ActionListener l = (e) -> sim.addCar(); // TODO: Make functionality for more classes of vehicles here!
 		for (int i=0;i<carTypes.length;i++) {
 			JButton btn = new JButton(carTypes[i]);
 			btn.setAlignmentX(Component.CENTER_ALIGNMENT);
@@ -71,6 +75,7 @@ public class ControlPanel {
 		}
 		return pane;
 	}
+	
 	private JPanel makeStatePane() {
 		JPanel pane = new JPanel();
 		pane.setLayout(new BoxLayout(pane, BoxLayout.LINE_AXIS));
@@ -105,6 +110,54 @@ public class ControlPanel {
 		
 		return pane;
 	}
+
+	private void updateStateBtns() {
+		boolean p = sim.isPaused();
+		stepBtn.setEnabled(p);
+		playBtn.setEnabled(p);
+		pauseBtn.setEnabled(!p);
+	}
+	
+	private JPanel makeQuadtreePane() {
+		JPanel pane = new JPanel();
+		pane.setLayout(new BoxLayout(pane, BoxLayout.PAGE_AXIS));
+		pane.setBorder(BorderFactory.createTitledBorder(BorderFactory.createRaisedBevelBorder(), "Quadtree"));
+		JButton mergeBtn = new JButton(MERGE_TO_ROOT_STR);
+		mergeBtn.addActionListener((e)->sim.highway.getQuadtreeRoot().attemptMerge());
+		JButton splitBtn = new JButton(MAX_SPLIT_STR);
+		splitBtn.addActionListener((e)->sim.highway.getQuadtreeRoot().maxSplit());
+		JButton randomizeBtn = new JButton(RANDOMIZE_STR);
+		randomizeBtn.addActionListener((e)->sim.highway.getQuadtreeRoot().randomize());
+
+		mergeBtn.setAlignmentX(Component.CENTER_ALIGNMENT);
+		splitBtn.setAlignmentX(Component.CENTER_ALIGNMENT);
+		randomizeBtn.setAlignmentX(Component.CENTER_ALIGNMENT);
+		pane.add(mergeBtn);
+		pane.add(Box.createVerticalStrut(BUTTON_SEPERATION));
+		pane.add(splitBtn);
+		pane.add(Box.createVerticalStrut(BUTTON_SEPERATION));
+		pane.add(randomizeBtn);
+		return pane;
+	}
+	
+	private JPanel makeDebugOptionsPane() {
+		JPanel pane = new JPanel();
+		pane.setLayout(new BoxLayout(pane, BoxLayout.LINE_AXIS));
+		pane.setBorder(BorderFactory.createTitledBorder(BorderFactory.createRaisedBevelBorder(), "Debug Options"));
+		for (String opt : DebugOptions.OPTIONS) {
+			JToggleButton btn = new JToggleButton(opt);
+			btn.addActionListener((e) -> sim.debugOptions.set(opt, btn.isSelected()));
+			debugBtns.put(opt, btn);
+			pane.add(btn);
+		}
+		return pane;
+	}
+	
+	private void updateDebugBtns() {
+		for (String opt : DebugOptions.OPTIONS) {
+			debugBtns.get(opt).setSelected(sim.debugOptions.get(opt));;
+		}
+	}
 	
 	private JPanel makeTrafficPane() {
 		trafficPane = new JPanel();
@@ -115,10 +168,4 @@ public class ControlPanel {
 		return trafficPane;
 	}
 	
-	private void updateStateBtns() {
-		boolean p = sim.isPaused();
-		stepBtn.setEnabled(p);
-		playBtn.setEnabled(p);
-		pauseBtn.setEnabled(!p);
-	}
 }

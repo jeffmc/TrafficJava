@@ -21,19 +21,19 @@ public class Highway {
 	public Highway() {
 		vehicles = new ArrayList<>();
 		dataListeners = new ArrayList<>();
-		size = IVec2.make(1024, 256);;
-		quadtree = QuadtreeNode.randomize(IVec2.make(size.x(), size.y()), 8);
+		size = IVec2.make(512, 256); // powers of 2 for the quadtree
+		quadtree = QuadtreeNode.root(size, 6);
 	}
 	
 	public void addCar() {
-		Vehicle v = new Vehicle(IVec2.make((int)(-Math.random()*50)-50, (int)(Math.random()*500)), IVec2.make(30, 20));
+		Vehicle v = new Vehicle(IVec2.make((int)(Math.random()/2*size.x()), (int)(Math.random()*size.y())), IVec2.make(30, 20));
 		vehicles.add(v);
-//		System.out.println("[Highway" + this.id + "] Added car: " + vehicles.size() + ", listeneres: " + dataListeners.size());
 		for (HighwayDataListener l : dataListeners) {
 			l.vehicleAdded(vehicles.size()-1);
-//			System.out.println("[Highway" + this.id + "] Triggered listener");
 		}
-		quadtree.testAndAdd(v);
+		if (quadtree.testAndAdd(v)) {
+			System.out.println("[Highway] Added to qt!");
+		}
 	}
 	
 	public void update(long delta) {
@@ -41,7 +41,10 @@ public class Highway {
 			v.tick(delta);
 		}
 		
-		vehicles.removeIf((v) -> v.transform.x() > size.x());
+		if (vehicles.removeIf((v) -> v.transform.x() > size.x())) {
+			for (HighwayDataListener l : dataListeners)
+				l.refreshEverything();
+		};
 	}
 	
 	public void addDataListener(HighwayDataListener l) {

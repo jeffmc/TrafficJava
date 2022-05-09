@@ -1,5 +1,6 @@
 package net.mcmillan.traffic.simulation;
 
+import net.mcmillan.traffic.debug.DebugOptions;
 import net.mcmillan.traffic.event.Event;
 import net.mcmillan.traffic.event.EventQueue;
 import net.mcmillan.traffic.gfx.Camera;
@@ -11,7 +12,7 @@ public class TrafficSimulation {
 
 	// State
 	private boolean running = false;
-	private boolean paused = false;
+	private boolean paused = true;
 	private boolean stepOnce = false;
 	public void pause() { paused = true; }
 	public void play() { paused = false; }
@@ -27,6 +28,8 @@ public class TrafficSimulation {
 	
 	public Highway highway = new Highway();
 	public QuadtreeNode getQuadtreeRoot() { return highway.getQuadtreeRoot(); }
+
+	public DebugOptions debugOptions = new DebugOptions();
 	
 	public boolean isRunning() { return running; }
 	public boolean isPaused() { return paused; }
@@ -34,7 +37,7 @@ public class TrafficSimulation {
 	public void start() {
 		if (running) throw new IllegalStateException("Can't start an already active simulation!");
 		running = true;
-		for (int i=0;i<5;i++) {
+		for (int i=0;i<12;i++) {
 			addCar();
 		}
 	}
@@ -122,7 +125,5 @@ public class TrafficSimulation {
 	public ITransform2D getSelectionTransform() {
 		return new ITransform2D(morigin, msize);
 	}
-
-	// TODO: Implement flagging collisions.
 
 }

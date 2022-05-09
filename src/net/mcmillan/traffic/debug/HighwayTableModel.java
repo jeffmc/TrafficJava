@@ -1,5 +1,7 @@
 package net.mcmillan.traffic.debug;
 
+import java.awt.Color;
+
 import javax.swing.table.AbstractTableModel;
 
 import net.mcmillan.traffic.simulation.Highway;
@@ -24,7 +26,7 @@ public class HighwayTableModel extends AbstractTableModel implements HighwayData
 	@Override
     public Class<?> getColumnClass(int c) {
 		switch (c) {
-		case 0: return String.class;
+		case 0: return Color.class;
 		case 1: return int.class;
 		case 2: return int.class;
 		case 3: return double.class;
@@ -36,7 +38,7 @@ public class HighwayTableModel extends AbstractTableModel implements HighwayData
 	public Object getValueAt(int r, int c) {
 		Vehicle v = hw.vehicles.get(r);
 		switch (c) {
-		case 0: return v.color.toString();
+		case 0: return v.color;
 		case 1: return v.speed;
 		case 2: return v.topSpeed;
 		case 3: return v.power;
@@ -49,4 +51,15 @@ public class HighwayTableModel extends AbstractTableModel implements HighwayData
 	public void vehicleAdded(int idx) {
 		fireTableRowsInserted(idx, idx);
 	}
+	
+	@Override
+	public void vehicleRemoved(int idx) {
+		fireTableRowsInserted(idx, idx);
+	}
+
+	@Override
+	public void refreshEverything() {
+		fireTableStructureChanged();
+	}
+	
 }

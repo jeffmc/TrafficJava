@@ -3,7 +3,9 @@ package net.mcmillan.traffic.gfx;
 import java.awt.Color;
 import java.util.ArrayList;
 
+import net.mcmillan.traffic.debug.DebugOptions;
 import net.mcmillan.traffic.math.ITransform2D;
+import net.mcmillan.traffic.math.IVec2;
 import net.mcmillan.traffic.simulation.TrafficSimulation;
 import net.mcmillan.traffic.simulation.Vehicle;
 
@@ -51,14 +53,9 @@ public class TrafficRenderer {
 	
 	private void intl_draw(CameraGraphics cg, long delta) {
 		drawBackground(cg);
-
-		// Draw quadtree!
-//		long start = System.currentTimeMillis();
-//		scene.getQuadtreeRoot().draw(cg);
-//		System.out.println("Drawing quadtree took " + (System.currentTimeMillis() - start) + "ms");
-
+		
 		if (scene != null) 
-			drawScene(cg, scene);
+			drawScene(cg);
 
 		// Draw mouse selection rect
 		cg.setColor(Color.white);
@@ -85,7 +82,13 @@ public class TrafficRenderer {
 		}
 	}
 	
-	private void drawScene(CameraGraphics cg, TrafficSimulation sim) {
+	private void drawScene(CameraGraphics cg) {
+		if (scene.debugOptions.get(DebugOptions.DRAW_QUADTREE)) {
+			scene.getQuadtreeRoot().draw(cg);
+		} else {
+			cg.setColor(Color.LIGHT_GRAY);
+			cg.drawRect(new ITransform2D(IVec2.make(), scene.highway.size));
+		}
 		for (Vehicle v : scene.highway.vehicles) v.draw(cg);
 	}
 	

@@ -25,8 +25,8 @@ public class AppManager {
 	}
 
 	private void setup() {
-		window = new AppWindow();
 		controlPanel = new ControlPanel();
+		window = new AppWindow();
 		
 		sim = new TrafficSimulation();
 		

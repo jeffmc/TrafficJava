@@ -15,7 +15,7 @@ public class Vehicle {
 	public Color forceColor = NEUTRAL_COLOR;
 	public Color color = new Color((int)(Math.random() * Integer.MAX_VALUE));
 	public ITransform2D transform;
-	public int speed = 1;
+	public int speed = 2;
 	public int topSpeed = 4;
 	public double power = 0.05, brake = 0.03;
 	
