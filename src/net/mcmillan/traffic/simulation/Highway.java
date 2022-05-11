@@ -3,8 +3,9 @@ package net.mcmillan.traffic.simulation;
 import java.util.ArrayList;
 import java.util.Arrays;
 
-import net.mcmillan.traffic.debug.HighwayDataListener;
-import net.mcmillan.traffic.debug.HighwaySelectionListener;
+import net.mcmillan.traffic.debug.table.HighwayDataListener;
+import net.mcmillan.traffic.debug.table.HighwaySelectionListener;
+import net.mcmillan.traffic.math.DVec2;
 import net.mcmillan.traffic.math.ITransform2D;
 import net.mcmillan.traffic.math.IVec2;
 
@@ -27,7 +28,11 @@ public class Highway {
 	}
 	
 	public void addCar() {
-		Vehicle v = new Vehicle(IVec2.make((int)(Math.random()/2*size.x()), (int)(Math.random()*size.y())), IVec2.make(30, 20));
+		Vehicle v = new Vehicle(
+				DVec2.make(
+					Math.round(Math.random()/2*size.x()),
+					Math.round(Math.random()*size.y())), 
+				DVec2.make(30, 20));
 		vehicles.add(v);
 		for (HighwayDataListener l : dataListeners) {
 			l.vehicleAdded(vehicles.size()-1);
@@ -73,8 +78,12 @@ public class Highway {
 		
 		if (vehicles.removeIf((v) -> v.transform.x() > size.x())) {
 			for (HighwayDataListener l : dataListeners)
-				l.refreshEverything();
-		};
+				l.refreshDataAndStructure();
+		} else {
+			for (HighwayDataListener l : dataListeners)
+				l.refreshData();
+		}
+		
 	}
 	
 	public void addDataListener(HighwayDataListener l) { dataListeners.add(l); }

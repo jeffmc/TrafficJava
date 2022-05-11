@@ -19,9 +19,11 @@ public class TrafficRenderer {
 	private long delta = 0;
 	
 	public TrafficRenderer() {
-		addMonitor(() -> "[" + target.getWidth() + ", " + target.getHeight() + "]");
-		addMonitor(() -> "Ticks: " + scene.ticks());
-		addMonitor(() -> "Delta: " + delta);
+		addMonitor(new LabeledMonitorable("Camera", () -> "[" + cameraGfx.camX() + ", " + cameraGfx.camY() + "]")); // Make the visibility of these toggable in Control Panel
+		addMonitor(new LabeledMonitorable("Viewport", () -> "[" + target.getWidth() + ", " + target.getHeight() + "]"));
+		addMonitor(new LabeledMonitorable("Ticks", () -> Long.toString(scene.ticks())));
+		addMonitor(new LabeledMonitorable("Delta", () -> Long.toString(delta)));
+		addMonitor(new LabeledMonitorable("Vehicles", () -> Integer.toString(scene.highway.vehicles.size())));
 	}
 	
 	public void setScene(TrafficSimulation sim) {
@@ -109,6 +111,28 @@ public class TrafficRenderer {
 	
 	public interface Monitorable {
 		public String get();
+	}
+	
+	public class LabeledMonitorable implements Monitorable {
+
+		private String l, s = ": ";
+		private Monitorable m;
+		
+		public LabeledMonitorable(String label, Monitorable mon) {
+			l = label; 
+			m = mon;
+		}
+		public LabeledMonitorable(String label, String seperator, Monitorable mon) {
+			l = label; 
+			s = seperator;
+			m = mon;
+		}
+		
+		@Override
+		public String get() {
+			return l + s + m.get();
+		}
+		
 	}
 	
 }

@@ -13,8 +13,7 @@ public class TrafficSimulation {
 	private boolean running = false;
 	private boolean paused = true;
 	private boolean stepOnce = false;
-	public void pause() { paused = true; }
-	public void play() { paused = false; }
+	public void togglePlayPause() { paused = !paused; }
 	public void step() { stepOnce = true; }
 	
 	private EventQueue eventq = new EventQueue();

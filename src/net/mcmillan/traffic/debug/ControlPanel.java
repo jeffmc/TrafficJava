@@ -12,6 +12,7 @@ import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.JToggleButton;
 
+import net.mcmillan.traffic.debug.table.HighwayTable;
 import net.mcmillan.traffic.simulation.TrafficSimulation;
 
 public class ControlPanel {
@@ -33,8 +34,10 @@ public class ControlPanel {
 	private static final String[] carTypes = new String[] { "Car", "SUV", "Semi" };
 	private JButton[] carBtns = new JButton[carTypes.length];
 	
-	private JButton playBtn, pauseBtn, stepBtn;
-	private static final String PLAY_STR = "Play", PAUSE_STR = "Pause", STEP_STR = "Step",
+	private JButton playPauseBtn, stepBtn;
+	private static final String PLAY_STR = "Play", PLAY_TOOLTIP = "Continously run the simulation",
+			PAUSE_STR = "Pause", PAUSE_TOOLTIP = "Stop the simulation",
+			STEP_STR = "Step", STEP_TOOLTIP = "Tick the simulation once",
 			MERGE_TO_ROOT_STR = "Merge to Root", MAX_SPLIT_STR = "Split to Max Depth", RANDOMIZE_STR = "Randomize tree";
 	
 	private JPanel trafficPane;
@@ -81,30 +84,21 @@ public class ControlPanel {
 		pane.setLayout(new BoxLayout(pane, BoxLayout.LINE_AXIS));
 		pane.setBorder(BorderFactory.createTitledBorder(BorderFactory.createRaisedBevelBorder(), "State"));
 		
-		playBtn = new JButton(PLAY_STR);
-		playBtn.setAlignmentY(Component.CENTER_ALIGNMENT);
-		playBtn.addActionListener((e) -> {
-			sim.play();
+		playPauseBtn = new JButton(PLAY_STR);
+		playPauseBtn.setAlignmentY(Component.CENTER_ALIGNMENT);
+		playPauseBtn.addActionListener((e) -> {
+			sim.togglePlayPause();
 			updateStateBtns();
 		});
-		playBtn.setToolTipText("Continously run the simulation");
-		pauseBtn = new JButton(PAUSE_STR);
-		pauseBtn.setAlignmentY(Component.CENTER_ALIGNMENT);
-		pauseBtn.addActionListener((e) -> {
-			sim.pause();
-			updateStateBtns();
-		});
-		pauseBtn.setToolTipText("Stop the simulation");
 		stepBtn = new JButton(STEP_STR);
 		stepBtn.setAlignmentY(Component.CENTER_ALIGNMENT);
 		stepBtn.addActionListener((e) -> {
 			sim.step();
+			updateStateBtns();
 		});
-		stepBtn.setToolTipText("Tick the simulation once");
+		stepBtn.setToolTipText(STEP_TOOLTIP);
 		
-		pane.add(playBtn);
-		pane.add(Box.createHorizontalStrut(BUTTON_SEPERATION));
-		pane.add(pauseBtn);
+		pane.add(playPauseBtn);
 		pane.add(Box.createHorizontalStrut(BUTTON_SEPERATION));
 		pane.add(stepBtn);
 		
@@ -114,8 +108,8 @@ public class ControlPanel {
 	private void updateStateBtns() {
 		boolean p = sim.isPaused();
 		stepBtn.setEnabled(p);
-		playBtn.setEnabled(p);
-		pauseBtn.setEnabled(!p);
+		playPauseBtn.setText(p?PLAY_STR:PAUSE_STR);
+		playPauseBtn.setToolTipText(p?PLAY_TOOLTIP:PAUSE_TOOLTIP);
 	}
 	
 	/*private JPanel makeQuadtreePane() {

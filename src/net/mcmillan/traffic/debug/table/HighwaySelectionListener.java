@@ -1,4 +1,4 @@
-package net.mcmillan.traffic.debug;
+package net.mcmillan.traffic.debug.table;
 
 public interface HighwaySelectionListener {
 

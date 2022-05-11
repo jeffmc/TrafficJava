@@ -5,6 +5,7 @@ import java.util.LinkedHashSet;
 import java.util.Random;
 
 import net.mcmillan.traffic.gfx.CameraGraphics;
+import net.mcmillan.traffic.math.DTransform2D;
 import net.mcmillan.traffic.math.ITransform2D;
 import net.mcmillan.traffic.math.IVec2;
 import net.mcmillan.traffic.simulation.Vehicle;
@@ -88,7 +89,7 @@ public class QuadtreeNode {
 	
 	public boolean testAndAdd(Vehicle v) {
 		boolean added = false;
-		if (ITransform2D.intersects(v.transform, this.transform)) {
+		if (DTransform2D.intersects(v.transform, this.transform)) {
 			if (this.isLeaf()) {
 				linkVehicle(v);
 				added |= true;

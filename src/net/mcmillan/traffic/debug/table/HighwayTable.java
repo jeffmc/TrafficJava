@@ -1,6 +1,6 @@
-package net.mcmillan.traffic.debug;
+package net.mcmillan.traffic.debug.table;
 
-import java.util.List;
+import java.awt.Color;
 
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
@@ -11,7 +11,6 @@ import javax.swing.table.AbstractTableModel;
 import javax.swing.table.TableModel;
 
 import net.mcmillan.traffic.simulation.TrafficSimulation;
-import net.mcmillan.traffic.simulation.Vehicle;
 
 public class HighwayTable implements HighwaySelectionListener {
 
@@ -37,7 +36,9 @@ public class HighwayTable implements HighwaySelectionListener {
 	public void setSimulation(TrafficSimulation s) {
 		sim = s;
 		if (sim != null) {
-			table.setModel(new HighwayTableModel(sim.highway));
+			table.setDefaultRenderer(Color.class, new ColorCellRenderer());
+			HighwayTableModel model = new HighwayTableModel(sim.highway);
+			table.setModel(model);
 			sim.highway.addSelectionListener(this);
 			ListSelectionModel selModel = table.getSelectionModel();
 			selModel.addListSelectionListener(new ListSelectionListener() {

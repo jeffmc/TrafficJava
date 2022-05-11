@@ -3,6 +3,7 @@ package net.mcmillan.traffic.gfx;
 import java.awt.Color;
 import java.awt.Graphics;
 
+import net.mcmillan.traffic.math.DTransform2D;
 import net.mcmillan.traffic.math.ITransform2D;
 
 public class CameraGraphics {
@@ -35,17 +36,26 @@ public class CameraGraphics {
 	public void drawRect(ITransform2D t) {
 		this.drawRect(t.x(),t.y(),t.w(),t.h());
 	}
+	public void drawRect(DTransform2D t) {
+		this.drawRect((int)t.x(),(int)t.y(),(int)t.w(),(int)t.h());
+	}
 	public void drawRect(int x, int y, int w, int h) {
 		g.drawRect(x-cam.x,y-cam.y,w,h);
 	}
 	public void drawOverlayRect(ITransform2D t) {
 		this.drawOverlayRect(t.x(),t.y(),t.w(),t.h());
 	}
+	public void drawOverlayRect(DTransform2D t) {
+		this.drawOverlayRect((int)t.x(),(int)t.y(),(int)t.w(),(int)t.h());
+	}
 	public void drawOverlayRect(int x, int y, int w, int h) {
 		g.drawRect(x,y,w,h);
 	}
 	public void fillRect(ITransform2D t) {
 		this.fillRect(t.x(),t.y(),t.w(),t.h());
+	}
+	public void fillRect(DTransform2D t) {
+		this.fillRect((int)t.x(),(int)t.y(),(int)t.w(),(int)t.h());
 	}
 	public void fillRect(int x, int y, int w, int h) {
 		g.fillRect(x-cam.x,y-cam.y,w,h);
