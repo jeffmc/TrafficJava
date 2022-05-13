@@ -11,8 +11,6 @@ import net.mcmillan.traffic.math.IVec2;
 
 public class Highway {
 	
-//	public int id = (int)(Math.random()*Integer.MAX_VALUE); // For debugging purposes
-	
 	public ArrayList<Vehicle> vehicles = new ArrayList<>(), selectedVehicles = new ArrayList<>();
 	public IVec2 size;
 
@@ -42,6 +40,8 @@ public class Highway {
 //		}
 	}
 	
+	
+	// Selection code
 	public void selectIndices(int[] indices) { // TODO: Make more efficient selection system that doesn't reset every single tick
 		selectedVehicles.clear();
 		for (Vehicle v : vehicles) v.setSelected(false);
@@ -71,10 +71,17 @@ public class Highway {
 			l.selectionChanged(trimmed);
 	}
 	
+	public void attemptSelectionDeletion() {
+		if (vehicles.removeAll(selectedVehicles))
+			for (HighwayDataListener l : dataListeners)
+				l.refreshDataAndStructure();
+	}
+	
 	public void update(long delta) {
-		for (Vehicle v : vehicles) {
-			v.tick(delta);
-		}
+		
+		for (Vehicle v : vehicles) v.pretick();
+		for (Vehicle v : vehicles) v.tick();
+		for (Vehicle v : vehicles) v.posttick();
 		
 		if (vehicles.removeIf((v) -> v.transform.x() > size.x())) {
 			for (HighwayDataListener l : dataListeners)

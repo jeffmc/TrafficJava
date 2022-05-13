@@ -15,7 +15,7 @@ public class Vehicle {
 	public Color forceColor = NEUTRAL_COLOR;
 	public Color color = new Color((int)(Math.random() * Integer.MAX_VALUE));
 	public DTransform2D transform;
-	public double speed = 2, topSpeed = 4, power = 0.05, brake = 0.03;
+	public double acceleration = 0, speed = 0, topSpeed = 4, power = 0.01, brake = 0.03;
 	
 	private boolean selected = false;
 	public void setSelected(boolean b) { selected = b; }
@@ -29,8 +29,19 @@ public class Vehicle {
 		transform = new DTransform2D(pos, size);
 	}
 	
-	public void tick(long delta) {
-		transform.pos.add((int)speed, 0);
+	public void pretick() {
+		if (speed <= 0) acceleration = power;
+		if (speed >= topSpeed) acceleration = -brake;
+	}
+	
+	public void tick() {
+		acceleration = Math.max(-brake, Math.min(power, acceleration));
+		speed += acceleration;
+		speed = Math.max(0, Math.min(speed, topSpeed));
+	}
+	
+	public void posttick() {
+		transform.pos.add(speed, 0);
 	}
 	
 	public void draw(CameraGraphics g) {
@@ -44,4 +55,15 @@ public class Vehicle {
 		}
 	}
 	
+	public double brakingTime() {
+		return speed / brake;
+	}
+
+	public double brakingFunc(double t) {
+		return (-brake/2)*t*t + (speed+brake/2)*t;
+	}
+	
+	public double stoppingDistance() {
+		return brakingFunc(brakingTime());
+	}
 }

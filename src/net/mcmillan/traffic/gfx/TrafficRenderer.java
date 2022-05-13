@@ -115,8 +115,8 @@ public class TrafficRenderer {
 	
 	public class LabeledMonitorable implements Monitorable {
 
-		private String l, s = ": ";
-		private Monitorable m;
+		private String l, s = ": "; // Label + separator
+		private Monitorable m; // Data retriever
 		
 		public LabeledMonitorable(String label, Monitorable mon) {
 			l = label; 

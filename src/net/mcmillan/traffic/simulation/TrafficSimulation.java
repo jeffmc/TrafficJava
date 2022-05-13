@@ -1,5 +1,7 @@
 package net.mcmillan.traffic.simulation;
 
+import java.awt.event.KeyEvent;
+
 import net.mcmillan.traffic.debug.DebugOptions;
 import net.mcmillan.traffic.event.Event;
 import net.mcmillan.traffic.event.EventQueue;
@@ -74,6 +76,14 @@ public class TrafficSimulation {
 		while (!eventq.unloadedEmpty()) {
 			Event e = eventq.pop();
 			switch (e.code) {
+			case Event.KEY_RELEASED:
+				switch (e.keyCode()) {
+				case KeyEvent.VK_DELETE:
+				case KeyEvent.VK_BACK_SPACE:
+					highway.attemptSelectionDeletion();
+					break;
+				}
+				break;
 			case Event.MOUSE_PRESSED:
 				switch (e.button()) {
 				case Event.BUTTON1:

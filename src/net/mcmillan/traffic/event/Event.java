@@ -34,6 +34,25 @@ public class Event {
 		this.data = data;
 	}
 	
+	// Key
+	public char keyChar() {
+		switch (code) {
+		case KEY_TYPED: case KEY_PRESSED: case KEY_RELEASED:
+			return (char) data[0];
+		default:
+			throw new IllegalArgumentException(eventTypeFromCode(code) + " doesn't have keyChar component!");
+		}
+	}
+	public int keyCode() {
+		switch (code) {
+		case KEY_TYPED: case KEY_PRESSED: case KEY_RELEASED:
+			return (int) data[1];
+		default:
+			throw new IllegalArgumentException(eventTypeFromCode(code) + " doesn't have keyCode component!");
+		}
+	}
+	
+	// Mouse
 	public int x() {
 		switch (code) {
 		case MOUSE_RELEASED: case MOUSE_PRESSED: case MOUSE_EXITED: case MOUSE_ENTERED: case MOUSE_CLICKED: case MOUSE_MOVED: case MOUSE_DRAGGED: case MOUSE_WHEEL_MOVED:

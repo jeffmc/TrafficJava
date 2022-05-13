@@ -149,7 +149,7 @@ public class ControlPanel {
 	
 	private void updateDebugBtns() {
 		for (String opt : DebugOptions.OPTIONS) {
-			debugBtns.get(opt).setSelected(sim.debugOptions.get(opt));;
+			debugBtns.get(opt).setSelected(sim.debugOptions.get(opt));
 		}
 	}
 	
