@@ -5,6 +5,8 @@ import java.awt.Color;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.ListSelectionModel;
+import javax.swing.event.TableModelEvent;
+import javax.swing.event.TableModelListener;
 import javax.swing.table.AbstractTableModel;
 import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableColumnModel;
@@ -16,12 +18,13 @@ public class HighwayTable implements HighwaySelectionListener {
 
 	// Column Definition
 	private static final HighwayTableColumn<?>[] COLUMNS = new HighwayTableColumn[] {
-			new DefaultHighwayTableColumn<Color>("Color", Color.class, true, (v) -> v.color, (v,o) -> v.color = o),
+			new DefaultHighwayTableColumn<Color>("Color", Color.class, true, (v) -> v.color, (v,o) -> v.color = o,
+					new ColorCellRenderer()),
 			new DefaultHighwayTableColumn<Double>("Speed", double.class, true, (v) -> v.speed, (v,o) -> v.speed = o),
 			new DefaultHighwayTableColumn<Double>("Acceleration", double.class, true, (v) -> v.acceleration, (v,o) -> v.acceleration = o,
 					new SignedDoubleRenderer()),
 			new DefaultHighwayTableColumn<Double>("Top Speed", double.class, true, (v) -> v.topSpeed, (v,o) -> v.topSpeed = o),
-			new DefaultHighwayTableColumn<Double>("Power", double.class, true, (v) -> v.speed, (v,o) -> v.speed = o),
+			new DefaultHighwayTableColumn<Double>("Power", double.class, true, (v) -> v.power, (v,o) -> v.power = o),
 			new DefaultHighwayTableColumn<Double>("Brake", double.class, true, (v) -> v.brake, (v,o) -> v.brake = o),
 			new DefaultHighwayTableColumn<Double>("X", double.class, true, (v) -> v.transform.x(), (v,o) -> v.transform.x(o)),
 			new DefaultHighwayTableColumn<Double>("Y", double.class, true, (v) -> v.transform.y(), (v,o) -> v.transform.y(o)),
@@ -54,15 +57,8 @@ public class HighwayTable implements HighwaySelectionListener {
 		if (sim != null) {
 			// Assign model to table
 			HighwayTableModel model = new HighwayTableModel(sim.highway, COLUMNS);
+			model.addTableModelListener((e) -> { if (e.getColumn() == TableModelEvent.ALL_COLUMNS) setupCellRenderers(); });
 			table.setModel(model);
-
-			// Cell Rendering
-			table.setDefaultRenderer(Color.class, new ColorCellRenderer());
-			TableColumnModel cm = table.getColumnModel();
-			for (int i=0;i<COLUMNS.length;i++) {
-				TableCellRenderer r = COLUMNS[i].getCustomCellRenderer();
-				if (r != null) cm.getColumn(i).setCellRenderer(r);;
-			}
 			
 			// Data and Selection Listeners
 			sim.highway.addSelectionListener(this);
@@ -75,7 +71,15 @@ public class HighwayTable implements HighwaySelectionListener {
 			table.setModel(nullModel);
 		}
 	}
-
+	
+	private void setupCellRenderers() {
+		TableColumnModel cm = table.getColumnModel();
+		for (int i=0;i<COLUMNS.length;i++) {
+			TableCellRenderer r = COLUMNS[i].getCustomCellRenderer();
+			if (r != null) cm.getColumn(i).setCellRenderer(r);
+		}
+	}
+	
 	@Override
 	public void selectionChanged(int[] selected) {
 		ListSelectionModel selModel = table.getSelectionModel();
