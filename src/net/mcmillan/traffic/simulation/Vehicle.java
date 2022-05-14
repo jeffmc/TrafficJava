@@ -36,6 +36,13 @@ public class Vehicle {
 	
 	public void tick() {
 		acceleration = Math.max(-brake, Math.min(power, acceleration));
+		if (acceleration > 0) {
+			forceColor = ACCEL_COLOR;
+		} else if (acceleration < 0) {
+			forceColor = BRAKING_COLOR;
+		} else {
+			forceColor = NEUTRAL_COLOR;
+		}
 		speed += acceleration;
 		speed = Math.max(0, Math.min(speed, topSpeed));
 	}
