@@ -83,13 +83,11 @@ public class Highway {
 		for (Vehicle v : vehicles) v.tick();
 		for (Vehicle v : vehicles) v.posttick();
 		
-		if (vehicles.removeIf((v) -> v.transform.x() > size.x())) {
-			for (HighwayDataListener l : dataListeners)
-				l.refreshDataAndStructure();
-		} else {
-			for (HighwayDataListener l : dataListeners)
-				l.refreshData();
-		}
+		for (Vehicle v : vehicles) 
+			if (v.transform.x() > size.x()) v.transform.x(0);
+		
+		for (HighwayDataListener l : dataListeners)
+			l.refreshData();
 		
 	}
 	

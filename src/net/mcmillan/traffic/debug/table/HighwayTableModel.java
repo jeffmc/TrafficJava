@@ -18,66 +18,38 @@ public class HighwayTableModel extends AbstractTableModel implements HighwayData
 		hw.removeDataListener(this);
 		hw = null;
 	}
+
+	// Column Definition
+	private static final HighwayTableColumn<?>[] COLUMNS = new HighwayTableColumn[] {
+			new DefaultHighwayTableColumn<Color>("Color", Color.class, true, (v) -> v.color, (v,o) -> v.color = o),
+			new DefaultHighwayTableColumn<Double>("Speed", double.class, true, (v) -> v.speed, (v,o) -> v.speed = o),
+			new DefaultHighwayTableColumn<Double>("Top Speed", double.class, true, (v) -> v.topSpeed, (v,o) -> v.topSpeed = o),
+			new DefaultHighwayTableColumn<Double>("Power", double.class, true, (v) -> v.speed, (v,o) -> v.speed = o),
+			new DefaultHighwayTableColumn<Double>("Brake", double.class, true, (v) -> v.brake, (v,o) -> v.brake = o),
+			new DefaultHighwayTableColumn<Double>("X", double.class, true, (v) -> v.transform.x(), (v,o) -> v.transform.x(o)),
+			new DefaultHighwayTableColumn<Double>("Y", double.class, true, (v) -> v.transform.y(), (v,o) -> v.transform.y(o)),
+	};
+
+	// Table Properties
 	@Override public int getRowCount() { return hw.vehicles.size(); }
 	@Override public int getColumnCount() { return COLUMNS.length; }
+	
+	// Column Properties
+	@Override public String getColumnName(int c) { return COLUMNS[c].getColumnName(); }
+	@Override public Class<?> getColumnClass(int c) { return COLUMNS[c].getColumnClass(); }
+    @Override public boolean isCellEditable(int r, int c) { return COLUMNS[c].isCellEditable(r); }
 
-	private static final String[] COLUMNS = new String[] { "Color", "Speed", "Max Speed", "Power", "Braking", "X", "Y" }; // TODO: lane
-    public String getColumnName(int c) { return COLUMNS[c]; }
-	@Override
-    public Class<?> getColumnClass(int c) {
-		switch (c) {
-		case 0: return Color.class; // Color
-		case 1: return double.class; // Speed
-		case 2: return double.class; // Max
-		case 3: return double.class; // Power
-		case 4: return double.class; // Braking
-		case 5: return double.class; // X
-		case 6: return double.class; // Y
-		default: throw new IllegalArgumentException("Invalid column index: " + c);
-		}
-    }
+    // Getters and Setters
 	@Override
 	public Object getValueAt(int r, int c) {
 		Vehicle v = hw.vehicles.get(r);
-		switch (c) {
-		case 0: return v.color;
-		case 1: return v.speed;
-		case 2: return v.topSpeed;
-		case 3: return v.power;
-		case 4: return v.brake;
-		case 5: return v.transform.x();
-		case 6: return v.transform.y();
-		default: throw new IllegalArgumentException("Invalid column index: " + c);
-		}
+		return COLUMNS[c].getValueAt(v);
 	}
 
     @Override
-    public boolean isCellEditable(int r, int c) {
-		switch (c) {
-		case 0: return false;
-		case 1: return true;
-		case 2: return true;
-		case 3: return true;
-		case 4: return true;
-		case 5: return true;
-		case 6: return true;
-		default: throw new IllegalArgumentException("Invalid column index: " + c);
-		}
-    }
-
-    @Override
     public void setValueAt(Object o, int r, int c) {
-    	Vehicle v = hw.vehicles.get(r);
-    	switch (c) {
-		case 0: throw new IllegalArgumentException("Can't edit color (yet)");
-		case 1: v.speed = (double) o;
-		case 2: v.topSpeed = (double) o;
-		case 3: v.power = (double) o;
-		case 4: v.brake = (double) o;
-		case 5: v.transform.x((double) o);
-		case 6: v.transform.y((double) o);
-		default: throw new IllegalArgumentException("Invalid column index: " + c);
-    	}
+		Vehicle v = hw.vehicles.get(r);
+		COLUMNS[c].setValueAt(v, o);
     }
     
 	@Override
