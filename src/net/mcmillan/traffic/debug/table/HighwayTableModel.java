@@ -28,7 +28,7 @@ public class HighwayTableModel extends AbstractTableModel implements HighwayData
 	@Override public String getColumnName(int c) { return cols[c].getColumnName(); }
 	@Override public Class<?> getColumnClass(int c) { return cols[c].getColumnClass(); }
     @Override public boolean isCellEditable(int r, int c) { return cols[c].isCellEditable(r); }
-
+    
     // Getters and Setters
 	@Override
 	public Object getValueAt(int r, int c) {
