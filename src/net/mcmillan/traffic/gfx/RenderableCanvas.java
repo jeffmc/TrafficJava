@@ -36,25 +36,20 @@ public class RenderableCanvas {
 	private MouseMotionListener mouseMotionListener;
 	private MouseWheelListener mouseWheelListener;
 	private EventQueue eventq;
-//	private EventQueueWindow eqw;
 	
 	public RenderableCanvas() {
 		canvas = new Canvas();
-
 		eventq = new EventQueue();
-//		eqw = new EventQueueWindow(eventq);
-//		eqw.setVisible(true);
 		
 		setupCanvas(new Dimension(1152, 648));
 		updateSizeVec();
 		
 		canvas.addComponentListener(new ComponentAdapter() {
 			@Override public void componentResized(ComponentEvent e) {
-				updateSizeVec(); // TODO: Add listener model
-//				eventq.push(new Event(CANVAS_RESIZED))
+				updateSizeVec(); 
+//				eventq.push(new Event(CANVAS_RESIZED)) // TODO: Add listener model
 			}
 		});
-		
 		setupListeners();
 	}
 
@@ -126,7 +121,6 @@ public class RenderableCanvas {
 	
 	public void setEventQueue(EventQueue eq) {
 		eventq = eq;
-//		eqw.setEventQueue(eventq);
 		if (eventq != null) {
 			canvas.addKeyListener(keyListener);
 			canvas.addMouseListener(mouseListener);
@@ -166,12 +160,6 @@ public class RenderableCanvas {
 		Graphics gg = bufferStrategy.getDrawGraphics();
 		return gg.create();
 	}
-
-//	public void renderToCanvas() {
-//		Graphics g = getGraphics();
-////		Renderer.drawFrame(g); TODO: Impl
-//		g.dispose();
-//	}
 	
 	public void showBuffer() {
 		bufferStrategy.show();

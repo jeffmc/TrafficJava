@@ -38,12 +38,12 @@ public class TrafficSimulation {
 		if (running) throw new IllegalStateException("Can't start an already active simulation!");
 		running = true;
 		for (int i=0;i<12;i++) {
-			addCar();
+			addNewCar();
 		}
 	}
 	
-	public void addCar() {
-		highway.addCar();
+	public void addNewCar() {
+		highway.addNewCar();
 	}
 	
 	public void stop() {
@@ -132,7 +132,7 @@ public class TrafficSimulation {
 	}
 	
 	private void selectMouseArea() {
-		highway.selectRect(getSelectionTransform());
+		highway.selectArea(getSelectionTransform());
 	}
 	
 	public void update(long delta) {

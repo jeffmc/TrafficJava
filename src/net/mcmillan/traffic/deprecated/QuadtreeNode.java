@@ -1,4 +1,4 @@
-package net.mcmillan.traffic.physics;
+package net.mcmillan.traffic.deprecated;
 
 import java.awt.Color;
 import java.util.LinkedHashSet;

@@ -1,4 +1,4 @@
-package net.mcmillan.traffic.debug;
+package net.mcmillan.traffic.deprecated;
 
 import net.mcmillan.traffic.event.Event;
 

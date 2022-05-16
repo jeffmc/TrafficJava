@@ -1,4 +1,4 @@
-package net.mcmillan.traffic.debug;
+package net.mcmillan.traffic.deprecated;
 
 import java.awt.Dimension;
 import java.awt.FlowLayout;

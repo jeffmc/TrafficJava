@@ -67,7 +67,7 @@ public class ControlPanel {
 		JPanel pane = new JPanel();
 		pane.setLayout(new BoxLayout(pane, BoxLayout.LINE_AXIS));
 		pane.setBorder(BorderFactory.createTitledBorder(BorderFactory.createRaisedBevelBorder(), "Add Vehicles"));
-		ActionListener l = (e) -> sim.addCar(); // TODO: Make functionality for more classes of vehicles here!
+		ActionListener l = (e) -> sim.addNewCar(); // TODO: Make functionality for more classes of vehicles here!
 		for (int i=0;i<carTypes.length;i++) {
 			JButton btn = new JButton(carTypes[i]);
 			btn.setAlignmentX(Component.CENTER_ALIGNMENT);

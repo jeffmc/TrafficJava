@@ -1,12 +1,13 @@
 package net.mcmillan.traffic.debug.table;
 
 import java.awt.Color;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
 
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.ListSelectionModel;
 import javax.swing.event.TableModelEvent;
-import javax.swing.event.TableModelListener;
 import javax.swing.table.AbstractTableModel;
 import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableColumnModel;
@@ -37,6 +38,17 @@ public class HighwayTable implements HighwaySelectionListener {
 		@Override public int getColumnCount() { return 0; }
 	};
 	
+	private KeyAdapter keyListener = new KeyAdapter() {
+		public void keyReleased(KeyEvent e) {
+			switch (e.getKeyCode()) {
+			case KeyEvent.VK_DELETE:
+			case KeyEvent.VK_BACK_SPACE:
+				sim.highway.attemptSelectionDeletion();
+				break;
+			}
+		}
+	};
+	
 	// Components
 	private JTable table = new JTable();
 	public JTable getTable() { return table; }
@@ -50,6 +62,7 @@ public class HighwayTable implements HighwaySelectionListener {
 		table = new JTable();
 		scrollPane = new JScrollPane(table);
 		table.setFillsViewportHeight(true);
+		table.getTableHeader().setReorderingAllowed(false); // TODO: Disabled for now before fixing reorder listening for accurate custom cell renderers
 	}
 	
 	public void setSimulation(TrafficSimulation s) {
@@ -65,10 +78,12 @@ public class HighwayTable implements HighwaySelectionListener {
 			ListSelectionModel selModel = table.getSelectionModel();
 			// TODO: Fix this code, make reactionary rather than rebuilding array every tick from scratch
 			selModel.addListSelectionListener(
-				(e) -> sim.highway.selectIndices(selModel.getSelectedIndices())); 
+				(e) -> sim.highway.selectRows(selModel.getSelectedIndices())); 
+			table.addKeyListener(keyListener);
 			
 		} else {
 			table.setModel(nullModel);
+			table.removeKeyListener(keyListener);
 		}
 	}
 	
@@ -84,9 +99,8 @@ public class HighwayTable implements HighwaySelectionListener {
 	public void selectionChanged(int[] selected) {
 		ListSelectionModel selModel = table.getSelectionModel();
 		selModel.clearSelection();
-		for (int i = 0; i < selected.length; i++) {
+		for (int i = 0; i < selected.length; i++) 
 			selModel.addSelectionInterval(selected[i], selected[i]); // TODO: Group consecutive intervals and add as groups.
-		}
 	}
 	
 }

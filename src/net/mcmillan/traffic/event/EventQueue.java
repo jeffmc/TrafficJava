@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.concurrent.atomic.AtomicBoolean;
 
-import net.mcmillan.traffic.debug.EventQueueObserver;
+import net.mcmillan.traffic.deprecated.EventQueueObserver;
 
 public class EventQueue {
 

@@ -13,19 +13,15 @@ public class Highway {
 	
 	public ArrayList<Vehicle> vehicles = new ArrayList<>(), selectedVehicles = new ArrayList<>();
 	public IVec2 size;
-
-//	private QuadtreeNode quadtree;
-//	public QuadtreeNode getQuadtreeRoot() { return quadtree; }
 	
 	private ArrayList<HighwayDataListener> dataListeners = new ArrayList<>();
 	private ArrayList<HighwaySelectionListener> selectionListeners = new ArrayList<>();
 	
 	public Highway() {
 		size = IVec2.make(512, 256); // powers of 2 for the quadtree
-//		quadtree = QuadtreeNode.root(size, 6);
 	}
 	
-	public void addCar() {
+	public void addNewCar() {
 		Vehicle v = new Vehicle(
 				DVec2.make(
 					Math.round(Math.random()/2*size.x()),
@@ -35,14 +31,11 @@ public class Highway {
 		for (HighwayDataListener l : dataListeners) {
 			l.vehicleAdded(vehicles.size()-1);
 		}
-//		if (quadtree.testAndAdd(v)) {
-//			System.out.println("[Highway] Added to qt!");
-//		}
 	}
 	
 	
 	// Selection code
-	public void selectIndices(int[] indices) { // TODO: Make more efficient selection system that doesn't reset every single tick
+	public void selectRows(int[] indices) { // TODO: Make more efficient selection system that doesn't reset every single tick
 		selectedVehicles.clear();
 		for (Vehicle v : vehicles) v.setSelected(false);
 		for (int idx : indices) {
@@ -52,13 +45,13 @@ public class Highway {
 		}
 	}
 	
-	public void selectRect(ITransform2D mrect) {
+	public void selectArea(ITransform2D area) {
 		selectedVehicles.clear();
 		int[] selected = new int[vehicles.size()];
 		int j=0;
 		for (int i=0;i<vehicles.size();i++) {
 			Vehicle v = vehicles.get(i);
-			if (v.transform.intersects(mrect)) {
+			if (v.transform.intersects(area)) {
 				v.setSelected(true);
 				selectedVehicles.add(v);
 				selected[j++] = i;
