@@ -15,6 +15,7 @@ import javax.swing.table.TableModel;
 
 import net.mcmillan.traffic.simulation.TrafficSimulation;
 
+// Meant to display and manipulate data of vehicles.
 public class HighwayTable implements HighwaySelectionListener {
 
 	// Column Definition
@@ -38,6 +39,7 @@ public class HighwayTable implements HighwaySelectionListener {
 		@Override public int getColumnCount() { return 0; }
 	};
 	
+	// KeyListener Used for deletion of vehicles
 	private KeyAdapter keyListener = new KeyAdapter() {
 		public void keyReleased(KeyEvent e) {
 			switch (e.getKeyCode()) {

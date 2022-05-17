@@ -29,6 +29,16 @@ public class DTransform2D {
 		pos.y(v);
 		return this;
 	}
+	
+	public DTransform2D move(DVec2 v) {
+		pos.add(v);
+		return this;
+	}
+	public DTransform2D move(double x, double y) {
+		pos.add(x, y);
+		return this;
+	}
+	
 	public double w() { return size.x(); }
 	public double h() { return size.y(); }
 	public double width() { return size.x(); }

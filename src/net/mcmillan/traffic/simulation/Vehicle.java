@@ -10,12 +10,19 @@ public class Vehicle {
 	public static final Color BRAKING_COLOR = new Color(255, 0, 0), 
 			NEUTRAL_COLOR = new Color(0,0,255),
 			ACCEL_COLOR = new Color(0,255,0),
-			SELECTED_COLOR = new Color(255,255,0);
+			SELECTED_COLOR = new Color(255,255,0),
+			DEBUG_COLOR = new Color(0,255,255);
 	
 	public Color forceColor = NEUTRAL_COLOR;
 	public Color color = new Color((int)(Math.random() * Integer.MAX_VALUE));
 	public DTransform2D transform;
-	public double acceleration = 0, speed = 0, topSpeed = 4, power = 0.01, brake = 0.03;
+	
+	// Vehicle Data
+	public double acceleration = 0, speed = 0, // velocity 
+			topSpeed = 4, power = 0.01, brake = 0.03, // attributes
+			cachedStoppingDistance = -1;
+	
+	public boolean debugMode = false;
 	
 	private boolean selected = false;
 	public void setSelected(boolean b) { selected = b; }
@@ -45,20 +52,37 @@ public class Vehicle {
 		}
 		speed += acceleration;
 		speed = Math.max(0, Math.min(speed, topSpeed));
+		cachedStoppingDistance = brakingFunc(brakingTime());
 	}
 	
 	public void posttick() {
 		transform.pos.add(speed, 0);
 	}
 	
-	public void draw(CameraGraphics g) {
+	public void draw(CameraGraphics g, boolean drawForces, int xOffset) {
+		DTransform2D transform = this.transform.copy().move(xOffset,0);
 		g.setColor(color);
 		g.fillRect(transform);
-		g.setColor(forceColor);
-		g.drawRect(transform);
+		if (drawForces||debugMode) {
+			g.setColor(forceColor);
+			g.drawRect(transform);
+		}
 		if (selected) {
 			g.setColor(SELECTED_COLOR);
 			g.drawRect(transform.copy().offset(3));
+		}
+		if (debugMode) {
+			g.setColor(DEBUG_COLOR);
+			g.drawRect(transform.copy().offset(-3));
+			if (cachedStoppingDistance > 0) {
+				// TODO: Move the stopping distance code to its own debugoption or another alternative method
+				double x = transform.pos.x()+transform.size.x();
+				int y = (int)(transform.pos.y()+transform.size.y()/2);
+				int sx = (int)(x+cachedStoppingDistance);
+				final int HALF_HEIGHT = 8;
+				g.drawLine((int)x, y, sx, y);
+				g.drawLine(sx, y-HALF_HEIGHT, sx, y+HALF_HEIGHT);
+			}
 		}
 	}
 	

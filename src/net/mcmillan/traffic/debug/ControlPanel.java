@@ -1,6 +1,7 @@
 package net.mcmillan.traffic.debug;
 
 import java.awt.Component;
+import java.awt.GridLayout;
 import java.awt.event.ActionListener;
 import java.util.HashMap;
 
@@ -15,10 +16,11 @@ import javax.swing.JToggleButton;
 import net.mcmillan.traffic.debug.table.HighwayTable;
 import net.mcmillan.traffic.simulation.TrafficSimulation;
 
+// Meant for the user's modification of variables in the simulation and management of the sim's state.
 public class ControlPanel {
 
-	private static final int SECTION_SEPERATION = 10;
-	private static final int BUTTON_SEPERATION = 3;
+	private static final int SECTION_SEPERATION = 10; // Between panes
+	private static final int BUTTON_SEPERATION = 3; // Between UI elements within single panes
 	
 	private JFrame frame = new JFrame("Control Panel");
 	public JFrame getFrame() { return frame; }
@@ -37,8 +39,7 @@ public class ControlPanel {
 	private JButton playPauseBtn, stepBtn;
 	private static final String PLAY_STR = "Play", PLAY_TOOLTIP = "Continously run the simulation",
 			PAUSE_STR = "Pause", PAUSE_TOOLTIP = "Stop the simulation",
-			STEP_STR = "Step", STEP_TOOLTIP = "Tick the simulation once",
-			MERGE_TO_ROOT_STR = "Merge to Root", MAX_SPLIT_STR = "Split to Max Depth", RANDOMIZE_STR = "Randomize tree";
+			STEP_STR = "Step", STEP_TOOLTIP = "Tick the simulation once";
 	
 	private JPanel trafficPane;
 	private HighwayTable highwayTable;
@@ -53,8 +54,6 @@ public class ControlPanel {
 		frame.add(Box.createVerticalStrut(SECTION_SEPERATION));
 		frame.add(makeStatePane());
 		frame.add(Box.createVerticalStrut(SECTION_SEPERATION));
-//		frame.add(makeQuadtreePane());
-//		frame.add(Box.createVerticalStrut(SECTION_SEPERATION));
 		frame.add(makeDebugOptionsPane());
 		frame.add(Box.createVerticalStrut(SECTION_SEPERATION));
 		frame.add(makeTrafficPane());
@@ -67,7 +66,7 @@ public class ControlPanel {
 		JPanel pane = new JPanel();
 		pane.setLayout(new BoxLayout(pane, BoxLayout.LINE_AXIS));
 		pane.setBorder(BorderFactory.createTitledBorder(BorderFactory.createRaisedBevelBorder(), "Add Vehicles"));
-		ActionListener l = (e) -> sim.addNewCar(); // TODO: Make functionality for more classes of vehicles here!
+		ActionListener l = (e) -> sim.highway.addNewCar(); // TODO: Make functionality for more classes of vehicles here!
 		for (int i=0;i<carTypes.length;i++) {
 			JButton btn = new JButton(carTypes[i]);
 			btn.setAlignmentX(Component.CENTER_ALIGNMENT);
@@ -112,33 +111,12 @@ public class ControlPanel {
 		playPauseBtn.setToolTipText(p?PLAY_TOOLTIP:PAUSE_TOOLTIP);
 	}
 	
-	/*private JPanel makeQuadtreePane() {
-		JPanel pane = new JPanel();
-		pane.setLayout(new BoxLayout(pane, BoxLayout.PAGE_AXIS));
-		pane.setBorder(BorderFactory.createTitledBorder(BorderFactory.createRaisedBevelBorder(), "Quadtree"));
-		JButton mergeBtn = new JButton(MERGE_TO_ROOT_STR);
-		mergeBtn.addActionListener((e)->sim.highway.getQuadtreeRoot().attemptMerge());
-		JButton splitBtn = new JButton(MAX_SPLIT_STR);
-		splitBtn.addActionListener((e)->sim.highway.getQuadtreeRoot().maxSplit());
-		JButton randomizeBtn = new JButton(RANDOMIZE_STR);
-		randomizeBtn.addActionListener((e)->sim.highway.getQuadtreeRoot().randomize());
-
-		mergeBtn.setAlignmentX(Component.CENTER_ALIGNMENT);
-		splitBtn.setAlignmentX(Component.CENTER_ALIGNMENT);
-		randomizeBtn.setAlignmentX(Component.CENTER_ALIGNMENT);
-		pane.add(mergeBtn);
-		pane.add(Box.createVerticalStrut(BUTTON_SEPERATION));
-		pane.add(splitBtn);
-		pane.add(Box.createVerticalStrut(BUTTON_SEPERATION));
-		pane.add(randomizeBtn);
-		return pane;
-	}*/
-	
 	private JPanel makeDebugOptionsPane() {
 		JPanel pane = new JPanel();
-		pane.setLayout(new BoxLayout(pane, BoxLayout.LINE_AXIS));
+		pane.setLayout(new GridLayout(0, 2, BUTTON_SEPERATION, BUTTON_SEPERATION));
 		pane.setBorder(BorderFactory.createTitledBorder(BorderFactory.createRaisedBevelBorder(), "Debug Options"));
-		for (String opt : DebugOptions.OPTIONS) {
+		for (int i=0;i<DebugOptions.OPTIONS.length;i++) {
+			String opt = DebugOptions.OPTIONS[i];
 			JToggleButton btn = new JToggleButton(opt);
 			btn.addActionListener((e) -> sim.debugOptions.set(opt, btn.isSelected()));
 			debugBtns.put(opt, btn);

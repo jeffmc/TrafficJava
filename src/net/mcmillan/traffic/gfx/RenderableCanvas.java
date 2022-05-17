@@ -19,18 +19,20 @@ import net.mcmillan.traffic.event.Event;
 import net.mcmillan.traffic.event.EventQueue;
 import net.mcmillan.traffic.math.IVec2;
 
+// A class meant to hold a JWT canvas instance and manage all event passthrough to the app-specific event queue.
 public class RenderableCanvas {
 
+	// Components
 	private Canvas canvas;
 	public Canvas getAWTCanvas() { return canvas; }
-	
 	private BufferStrategy bufferStrategy = null;
 	
+	// Viewport size
 	private IVec2 size = IVec2.make();
-	
 	public int getWidth() { return size.x(); }
 	public int getHeight() { return size.y(); }
 
+	// Listeners
 	private KeyListener keyListener;
 	private MouseListener mouseListener;
 	private MouseMotionListener mouseMotionListener;
@@ -41,7 +43,7 @@ public class RenderableCanvas {
 		canvas = new Canvas();
 		eventq = new EventQueue();
 		
-		setupCanvas(new Dimension(1152, 648));
+		setupCanvas(new Dimension(1280, 720));
 		updateSizeVec();
 		
 		canvas.addComponentListener(new ComponentAdapter() {
@@ -53,10 +55,37 @@ public class RenderableCanvas {
 		setupListeners();
 	}
 
+	// Canvas buffers
+	public void makeBuffers() {
+		canvas.createBufferStrategy(2);
+		bufferStrategy = canvas.getBufferStrategy();
+	}
+	public Graphics getGraphics() {
+		Graphics gg = bufferStrategy.getDrawGraphics();
+		return gg.create();
+	}
+	
+	public void showBuffer() {
+		bufferStrategy.show();
+	}
+	
+	// Size
+	private void setupCanvas(Dimension size) {
+		canvas.setMinimumSize(size);
+		canvas.setPreferredSize(size);
+		canvas.setMaximumSize(size);
+	}
+	private void updateSizeVec() {
+		size.x(canvas.getWidth());
+		size.y(canvas.getHeight());
+	}
+	
+	// Custom cursor
 	public void setCursor(Cursor c) {
 		canvas.setCursor(c);
 	}
 	
+	// Events
 	private void setupListeners() {
 		keyListener = new KeyListener() {
 			@Override
@@ -118,7 +147,6 @@ public class RenderableCanvas {
 			}
 		};
 	}
-	
 	public void setEventQueue(EventQueue eq) {
 		eventq = eq;
 		if (eventq != null) {
@@ -135,33 +163,7 @@ public class RenderableCanvas {
 			System.out.println("Listeners removed!");
 		}
 	}
-	
 	public void removeEventQueue() {
 		setEventQueue(null);
-	}
-	
-	public void makeBuffers() {
-		canvas.createBufferStrategy(2);
-		bufferStrategy = canvas.getBufferStrategy();
-	}
-
-	private void setupCanvas(Dimension size) {
-		canvas.setMinimumSize(size);
-		canvas.setPreferredSize(size);
-		canvas.setMaximumSize(size);
-	}
-	
-	private void updateSizeVec() {
-		size.x(canvas.getWidth());
-		size.y(canvas.getHeight());
-	}
-	
-	public Graphics getGraphics() {
-		Graphics gg = bufferStrategy.getDrawGraphics();
-		return gg.create();
-	}
-	
-	public void showBuffer() {
-		bufferStrategy.show();
 	}
 }

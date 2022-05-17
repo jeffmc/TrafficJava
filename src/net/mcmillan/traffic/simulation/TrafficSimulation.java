@@ -9,52 +9,44 @@ import net.mcmillan.traffic.gfx.Camera;
 import net.mcmillan.traffic.math.ITransform2D;
 import net.mcmillan.traffic.math.IVec2;
 
+// Class meant to handle and organize all logic of the application
 public class TrafficSimulation {
-
-	// State
+	// Highway Constants
+	private static final int LANES = 4, LANE_SIZE = 64, HIGHWAY_LENGTH = 1024;
+	
+	// Subsystems
+	private EventQueue eventq = new EventQueue();
+	public EventQueue getEventQueue() { return eventq; }
+	private Camera cam = new Camera();
+	public Camera getCamera() { return cam; }
+	public Highway highway = new Highway(LANES, LANE_SIZE, HIGHWAY_LENGTH);
+	public DebugOptions debugOptions = new DebugOptions();
+	
+	// State management
 	private boolean running = false;
 	private boolean paused = true;
 	private boolean stepOnce = false;
 	public void togglePlayPause() { paused = !paused; }
 	public void step() { stepOnce = true; }
 	
-	private EventQueue eventq = new EventQueue();
-	public EventQueue getEventQueue() { return eventq; }
-	
-	public IVec2 mstart = IVec2.make(), mnow = IVec2.make(), msize = IVec2.make(), morigin = IVec2.make();
-	
-	private Camera cam = new Camera();
-	public Camera getCamera() { return cam; }
-	
-	public Highway highway = new Highway();
-//	public QuadtreeNode getQuadtreeRoot() { return highway.getQuadtreeRoot(); }
-
-	public DebugOptions debugOptions = new DebugOptions();
-	
 	public boolean isRunning() { return running; }
 	public boolean isPaused() { return paused; }
-	
 	public void start() {
 		if (running) throw new IllegalStateException("Can't start an already active simulation!");
 		running = true;
 		for (int i=0;i<12;i++) {
-			addNewCar();
+			highway.addNewCar();
 		}
 	}
-	
-	public void addNewCar() {
-		highway.addNewCar();
-	}
-	
 	public void stop() {
 		if (!running) throw new IllegalStateException("Can't stop inactive simulation!");
 		running = false;
 		highway = null;
 	}
 	
+	// Ticking
 	private long ticks = 0;
 	public long ticks() { return ticks; }
-	
 	public void tick(long delta) {
 		if (!running) throw new IllegalStateException("Can't tick inactive simulation!");
 		pollEvents(); // Run this before any update code.
@@ -64,13 +56,17 @@ public class TrafficSimulation {
 			stepOnce = false;
 		}
 	}
+	public void update(long delta) {
+		highway.update(delta);
+	}
 
+	// Dragging TODO: Replace drag mode with more sophisticated Drag System
 	private int dragMode = -1;
 	public int getDragMode() { return dragMode; }
 	public static final int DRAG_SELECT_MODE = 1, DRAG_CAM_MODE = 0;
-	
-	private int cox, coy, msx, msy;
-	
+	public IVec2 mstart = IVec2.make(), mnow = IVec2.make(), msize = IVec2.make(), morigin = IVec2.make();
+	private int cox, coy, msx, msy; // Cam original x,y / Mouse drag start x,y TODO: Place these variables into DragHandler system
+
 	public void pollEvents() {
 		eventq.unload();
 		while (!eventq.unloadedEmpty()) {
@@ -78,6 +74,9 @@ public class TrafficSimulation {
 			switch (e.code) {
 			case Event.KEY_RELEASED:
 				switch (e.keyCode()) {
+				case KeyEvent.VK_D:
+					for (Vehicle v :highway.selectedVehicles) v.debugMode = !v.debugMode;
+					break;
 				case KeyEvent.VK_DELETE:
 				case KeyEvent.VK_BACK_SPACE:
 					highway.attemptSelectionDeletion();
@@ -126,17 +125,13 @@ public class TrafficSimulation {
 		msize.set(mstart).sub(mnow).abs();
 		morigin.set(mstart).min(mnow);
 	}
-	
-	private void setMouseNowRelativeToCam(Event e) { // Convert from screen -> world coords
+
+	private void setMouseNowRelativeToCam(Event e) { // Converts from screen -> world coords
 		mnow.set(e.x()+cam.x, e.y()+cam.y);
 	}
 	
 	private void selectMouseArea() {
 		highway.selectArea(getSelectionTransform());
-	}
-	
-	public void update(long delta) {
-		highway.update(delta);
 	}
 	
 	public ITransform2D getSelectionTransform() {
