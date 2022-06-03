@@ -34,9 +34,9 @@ public class TrafficSimulation {
 	public void start() {
 		if (running) throw new IllegalStateException("Can't start an already active simulation!");
 		running = true;
-		for (int i=0;i<12;i++) {
-			highway.addNewCar();
-		}
+//		for (int i=0;i<12;i++) {
+//			highway.addNewCar();
+//		}
 	}
 	public void stop() {
 		if (!running) throw new IllegalStateException("Can't stop inactive simulation!");

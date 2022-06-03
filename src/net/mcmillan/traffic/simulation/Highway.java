@@ -16,6 +16,7 @@ public class Highway {
 	
 	// Vehicles
 	public ArrayList<Vehicle> vehicles = new ArrayList<>(), selectedVehicles = new ArrayList<>();
+	public ArrayList<Vehicle> laneVehicles[];
 	
 	// Collisions
 	public static final int COLLISION_BUFFER_MAX = 300;
@@ -34,16 +35,21 @@ public class Highway {
 	public ITransform2D[] getLaneBoundingBoxes() { return laneBoundingBoxes; }
 	
 	// Constructor
-	public Highway(int lanes, int laneSz, int highwayLength) {
-		this.lanes = lanes;
-		this.laneSize = laneSz;
-		this.highwayLength = highwayLength;
+	public Highway(int i_lanes, int i_laneSz, int i_highwayLength) {
+		lanes = i_lanes;
+		laneSize = i_laneSz;
+		highwayLength = i_highwayLength;
 		
-		size = IVec2.make(highwayLength, this.lanes*laneSz);
-		laneBoundingBoxes = new ITransform2D[this.lanes];
-		IVec2 laneBox = IVec2.make(highwayLength, laneSz-1);
+		size = IVec2.make(highwayLength, lanes*laneSize);
+		laneBoundingBoxes = new ITransform2D[lanes];
+		IVec2 laneBox = IVec2.make(highwayLength, laneSize-1);
 		for (int i=0;i<this.lanes;i++) {
-			laneBoundingBoxes[i] = new ITransform2D(IVec2.make(0, i*laneSz), laneBox.copy());
+			laneBoundingBoxes[i] = new ITransform2D(IVec2.make(0, i*laneSize), laneBox.copy());
+		}
+		
+		laneVehicles = new ArrayList[lanes];
+		for (int i=0;i<lanes;i++) {
+			laneVehicles[i] = new ArrayList<Vehicle>();
 		}
 	}
 	
@@ -64,6 +70,11 @@ public class Highway {
 	public double getLaneCenteredY(int lane, double height) {
 		return (double)(lane*laneSize + laneSize/2) - (height/2);
 	}
+	
+	public int getLane(Vehicle v) {
+		return (int) (v.transform.cy() / laneSize);
+	}
+	
 	
 	// Selection/deletion code
 	public void selectRows(int[] indices) { // TODO: Make more efficient selection system that doesn't reset every single tick
@@ -100,18 +111,40 @@ public class Highway {
 	}
 	
 	// Ticking
+	private long ticks = 0;
 	public void update(long delta) {
+		// Reset laneVehicles
+		for (ArrayList<Vehicle> vs : laneVehicles)
+			vs.clear();
+		for (Vehicle v : vehicles) {
+			int l = getLane(v);
+			if (l > -1 && l < lanes) {
+				laneVehicles[l].add(v);
+			} else {
+				System.err.println("[Highway] VEHICLE OUTSIDE OF LANES");
+			}
+		}
 		
-		for (Vehicle v : vehicles) v.pretick();
+		// Ticking
+		for (ArrayList<Vehicle> vs : laneVehicles) {
+			if (vs.size() < 1) continue;
+			Vehicle f = vs.get(0);
+			for (int i=vs.size()-1;i>=0;i--) {
+				Vehicle v = vs.get(i);
+				v.pretick(ticks, f, highwayLength);
+			}
+		}
 		for (Vehicle v : vehicles) v.tick();
 		for (Vehicle v : vehicles) v.posttick();
 		
+		// Rollover
 		for (Vehicle v : vehicles) 
 			if (v.transform.x() > size.x()) v.transform.x(0);
 		
+		// Reflect update visually
 		for (HighwayDataListener l : dataListeners)
 			l.refreshData();
-		
+		ticks++;
 	}
 	
 	// Listener management

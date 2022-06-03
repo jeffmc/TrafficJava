@@ -11,7 +11,8 @@ public class Vehicle {
 			NEUTRAL_COLOR = new Color(0,0,255),
 			ACCEL_COLOR = new Color(0,255,0),
 			SELECTED_COLOR = new Color(255,255,0),
-			DEBUG_COLOR = new Color(0,255,255);
+			DEBUG_COLOR = new Color(0,255,255),
+			FRONT_DISTANCE_COLOR = new Color(255,0,0);
 	
 	public Color forceColor = NEUTRAL_COLOR;
 	public Color color = new Color((int)(Math.random() * Integer.MAX_VALUE));
@@ -20,7 +21,7 @@ public class Vehicle {
 	// Vehicle Data
 	public double acceleration = 0, speed = 0, // velocity 
 			topSpeed = 4, power = 0.01, brake = 0.03, // attributes
-			cachedStoppingDistance = -1;
+			cachedStoppingDistance = -1, cachedFrontDistance = -1;
 	
 	public boolean debugMode = false;
 	
@@ -36,9 +37,36 @@ public class Vehicle {
 		transform = new DTransform2D(pos, size);
 	}
 	
-	public void pretick() {
-		if (speed <= 0) acceleration = power;
-		if (speed >= topSpeed) acceleration = -brake;
+	private long lastPretick = -1;
+	public void pretick(long ticks, Vehicle f, int highwayLength) {
+		if (ticks == lastPretick) return;
+		lastPretick = ticks;
+		
+		// Determine target speed
+		if (f == this) { // Hit max speed if alone in lane
+			acceleration = power;
+			cachedFrontDistance = -1;
+			return;
+		}
+		
+		// Find front distance
+		double dist = f.transform.x() - this.transform.rx();
+		if (dist < 0) dist += highwayLength;
+		cachedFrontDistance = dist;
+		
+		// Find front brake difference
+		double brakeDiff = f.cachedStoppingDistance - this.cachedFrontDistance;
+		if (brakeDiff > 0) {
+			acceleration = power;
+		} else if (closeEqual(brakeDiff, 0, 0.1)) {
+			acceleration = 0;
+		} else {
+			acceleration = brake;
+		}
+	}
+	
+	public boolean closeEqual(double a, double b, double margin) {
+		return Math.abs(a - b) <= margin;
 	}
 	
 	public void tick() {
@@ -59,13 +87,28 @@ public class Vehicle {
 		transform.pos.add(speed, 0);
 	}
 	
-	public void draw(CameraGraphics g, boolean drawForces, int xOffset) {
+	public void draw(CameraGraphics g, boolean drawForces, boolean drawBraking, boolean drawFrontDistance, int xOffset) {
 		DTransform2D transform = this.transform.copy().move(xOffset,0);
 		g.setColor(color);
 		g.fillRect(transform);
 		if (drawForces||debugMode) {
 			g.setColor(forceColor);
 			g.drawRect(transform);
+		}
+		if ((drawBraking||debugMode)&&cachedStoppingDistance > 0) {
+			double x = transform.rx();
+			int y = (int)(transform.cy());
+			int sx = (int)(x+cachedStoppingDistance);
+			final int HALF_HEIGHT = 8;
+			g.setColor(forceColor);
+			g.drawLine((int)x, y, sx, y);
+			g.drawLine(sx, y-HALF_HEIGHT, sx, y+HALF_HEIGHT);
+		}
+		if ((drawFrontDistance||debugMode)&&cachedFrontDistance > 0) {
+			g.setColor(FRONT_DISTANCE_COLOR);
+			int rx = (int)transform.rx();
+			int y = (int)transform.cy()+5;
+			g.drawLine(rx, y, (int) (rx + cachedFrontDistance), y);
 		}
 		if (selected) {
 			g.setColor(SELECTED_COLOR);
@@ -74,15 +117,6 @@ public class Vehicle {
 		if (debugMode) {
 			g.setColor(DEBUG_COLOR);
 			g.drawRect(transform.copy().offset(-3));
-			if (cachedStoppingDistance > 0) {
-				// TODO: Move the stopping distance code to its own debugoption or another alternative method
-				double x = transform.pos.x()+transform.size.x();
-				int y = (int)(transform.pos.y()+transform.size.y()/2);
-				int sx = (int)(x+cachedStoppingDistance);
-				final int HALF_HEIGHT = 8;
-				g.drawLine((int)x, y, sx, y);
-				g.drawLine(sx, y-HALF_HEIGHT, sx, y+HALF_HEIGHT);
-			}
 		}
 	}
 	

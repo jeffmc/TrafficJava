@@ -6,29 +6,32 @@ import java.util.HashMap;
 public class DebugOptions {
 
 	public static final String 
-			DRAW_BRAKING_GRAPH = "Draw Braking Graph (TODO)",
+			DRAW_BRAKING = "Draw Braking",
 			DRAW_GRIDLINES = "Draw Gridlines",
 			DRAW_FORCE_INDICATORS = "Draw Force Indicators",
 			DRAW_LANE_BOUNDING_BOXES = "Draw Lane Bounding Boxes",
-			DRAW_ROLLOVER = "Draw Rollover";
+			DRAW_ROLLOVER = "Draw Rollover",
+			DRAW_FRONT_DISTANCE = "Draw Front Distance";
 	
 	public static final String[] OPTIONS = new String[] {
-			DRAW_BRAKING_GRAPH,
+			DRAW_BRAKING,
 			DRAW_GRIDLINES,
 			DRAW_FORCE_INDICATORS,
 			DRAW_LANE_BOUNDING_BOXES,
-			DRAW_ROLLOVER
+			DRAW_ROLLOVER,
+			DRAW_FRONT_DISTANCE,
 		};
 	
 	private HashMap<String, Boolean> options = new HashMap<>();
 	
 	public DebugOptions() {
 		// Defaults
-		options.put(DRAW_BRAKING_GRAPH, false);
+		options.put(DRAW_BRAKING, false);
 		options.put(DRAW_GRIDLINES, false);
 		options.put(DRAW_FORCE_INDICATORS, false);
 		options.put(DRAW_LANE_BOUNDING_BOXES, false);
 		options.put(DRAW_ROLLOVER, false);
+		options.put(DRAW_FRONT_DISTANCE, false);
 	}
 	
 	public void set(String key, boolean v) {

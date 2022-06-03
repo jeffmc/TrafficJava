@@ -84,13 +84,17 @@ public class TrafficRenderer {
 				cg.drawRect(l);
 		}
 		boolean drawForces = scene.debugOptions.get(DebugOptions.DRAW_FORCE_INDICATORS);
-		for (Vehicle v : scene.highway.vehicles)
-			v.draw(cg, drawForces, 0);
-		
+		boolean drawBraking = scene.debugOptions.get(DebugOptions.DRAW_BRAKING);
+		boolean drawFrontDistance = scene.debugOptions.get(DebugOptions.DRAW_FRONT_DISTANCE);
 		if (scene.debugOptions.get(DebugOptions.DRAW_ROLLOVER)) {
 			int w = scene.highway.size.x();
+			for (Vehicle v : scene.highway.vehicles) {
+				v.draw(cg, drawForces, drawBraking, drawFrontDistance, 0);
+				v.draw(cg, drawForces, drawBraking, drawFrontDistance, v.transform.x() < w/2 ? w : -w);
+			}
+		} else {
 			for (Vehicle v : scene.highway.vehicles)
-				v.draw(cg, drawForces, v.transform.x() < w/2 ? w : -w);
+				v.draw(cg, drawForces, drawBraking, drawFrontDistance, 0);
 		}
 	}
 	

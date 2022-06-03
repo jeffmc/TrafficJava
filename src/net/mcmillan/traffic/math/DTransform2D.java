@@ -30,6 +30,9 @@ public class DTransform2D {
 		return this;
 	}
 	
+	public double rx() { return pos.x() + size.x(); }
+	public double by() { return pos.y() + size.y(); }
+	
 	public DTransform2D move(DVec2 v) {
 		pos.add(v);
 		return this;
