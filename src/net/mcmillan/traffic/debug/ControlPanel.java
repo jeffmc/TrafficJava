@@ -11,6 +11,7 @@ import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
+import javax.swing.JTextArea;
 import javax.swing.JToggleButton;
 
 import net.mcmillan.traffic.debug.table.HighwayTable;
@@ -57,16 +58,38 @@ public class ControlPanel {
 		frame.add(makeDebugOptionsPane());
 		frame.add(Box.createVerticalStrut(SECTION_SEPERATION));
 		frame.add(makeTrafficPane());
+		frame.add(Box.createVerticalStrut(SECTION_SEPERATION));
+		frame.add(makeControlsPane());
 		
 		frame.pack();
 		frame.setVisible(true);
+	}
+	
+	private JPanel makeControlsPane() {
+		JPanel pane = new JPanel();
+		final String[] controls = new String[] { 
+				"Click right mouse button: Add car",
+				"Drag left mouse button: Select cars",
+				"Delete/backspace: Remove selected cars",
+				"Drag middle mouse button: Move camera",
+				"D: Toggle debug mode on selected cars",
+		};
+		StringBuilder sb = new StringBuilder();
+		for (int i=0;i<controls.length;i++) {
+			sb.append(controls[i]);
+			if (i<controls.length-1) sb.append("\n");
+		}
+		JTextArea ta = new JTextArea(sb.toString());
+		ta.setEditable(false);
+		pane.add(ta);
+		return pane;
 	}
 	
 	private JPanel makeAdderPane() {
 		JPanel pane = new JPanel();
 		pane.setLayout(new BoxLayout(pane, BoxLayout.LINE_AXIS));
 		pane.setBorder(BorderFactory.createTitledBorder(BorderFactory.createRaisedBevelBorder(), "Add Vehicles"));
-		ActionListener l = (e) -> sim.highway.addNewCar(); // TODO: Make functionality for more classes of vehicles here!
+		ActionListener l = (e) -> sim.highway.addRandomCar(); // TODO: Make functionality for more classes of vehicles here!
 		for (int i=0;i<carTypes.length;i++) {
 			JButton btn = new JButton(carTypes[i]);
 			btn.setAlignmentX(Component.CENTER_ALIGNMENT);

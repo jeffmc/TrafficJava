@@ -12,18 +12,19 @@ public class AppManager {
 	private AppWindow window;
 	private ControlPanel controlPanel;
 	
-	private static AppManager instance;
+	private static AppManager instance = null;
 	public static AppManager getSingleton() { return instance; }
 	
 	private boolean running = false;
 	
-	public static void main(String[] args) {
-		instance = new AppManager();
+	public AppManager() {
+		if (instance != null) throw new IllegalStateException("Singleton already instantiated!");
+		instance = this;
 		instance.setup();
 		instance.loop();
 		instance.exit();
 	}
-
+	
 	private void setup() {
 		controlPanel = new ControlPanel();
 		window = new AppWindow();

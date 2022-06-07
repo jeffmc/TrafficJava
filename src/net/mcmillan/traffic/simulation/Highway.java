@@ -2,6 +2,7 @@ package net.mcmillan.traffic.simulation;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Comparator;
 import java.util.Random;
 
 import net.mcmillan.traffic.debug.table.HighwayDataListener;
@@ -54,30 +55,58 @@ public class Highway {
 	}
 	
 	// Adding new vehicles
-	public void addNewCar() {
-		Random r = new Random();
-		Vehicle v = new Vehicle(
-				DVec2.make(
-					Math.random()/2*size.x(),
-					getLaneCenteredY(r.nextInt(lanes), 48)), 
-				DVec2.make(96, 48));
+	public void addCar(Vehicle v) {
 		vehicles.add(v);
 		for (HighwayDataListener l : dataListeners) {
 			l.vehicleAdded(vehicles.size()-1);
 		}
 	}
 	
+	public void addRandomCar() {
+		Random r = new Random();
+		Vehicle v = new Vehicle(
+				DVec2.make(
+					Math.random()/2*size.x(),
+					getLaneCenteredY(r.nextInt(lanes), 48)), 
+				DVec2.make(96, 48));
+		addCar(v);
+	}
+	
+	public void addCarAt(double x, double y) {
+		Vehicle v = new Vehicle(
+				DVec2.make(x, getLaneCenteredY(getLane(y), 48)), 
+				DVec2.make(96, 48));
+		addCar(v);
+	}
+	
+	// Returns y-value of top edge of a car within a lane based on car height
 	public double getLaneCenteredY(int lane, double height) {
 		return (double)(lane*laneSize + laneSize/2) - (height/2);
 	}
 	
 	public int getLane(Vehicle v) {
-		return (int) (v.transform.cy() / laneSize);
+		return getLane(v.transform.cy());
+	}
+	
+	public int getLane(double y) {
+		return (int) (y / laneSize);
+	}
+	
+	public int[] getLanes(Vehicle v) {
+		int[] ls = new int[lanes];
+		int j = 0;
+		for (int i=0;i<laneBoundingBoxes.length;i++) {
+			if (v.transform.intersects(laneBoundingBoxes[i])) {
+				ls[j] = i;
+				j++;
+			}
+		}
+		return Arrays.copyOf(ls, j);
 	}
 	
 	
 	// Selection/deletion code
-	public void selectRows(int[] indices) { // TODO: Make more efficient selection system that doesn't reset every single tick
+	public void selectRows(int[] indices) {
 		selectedVehicles.clear();
 		for (Vehicle v : vehicles) v.setSelected(false);
 		for (int idx : indices) {
@@ -118,20 +147,24 @@ public class Highway {
 			vs.clear();
 		for (Vehicle v : vehicles) {
 			int l = getLane(v);
-			if (l > -1 && l < lanes) {
-				laneVehicles[l].add(v);
-			} else {
-				System.err.println("[Highway] VEHICLE OUTSIDE OF LANES");
-			}
+			v.cachedLane = l;
+			laneVehicles[l].add(v);
 		}
 		
 		// Ticking
 		for (ArrayList<Vehicle> vs : laneVehicles) {
+			vs.sort(new Comparator<Vehicle>() {
+				@Override
+				public int compare(Vehicle a, Vehicle b) {
+					return (int)(a.transform.x() - b.transform.x());
+				}
+			});
 			if (vs.size() < 1) continue;
 			Vehicle f = vs.get(0);
 			for (int i=vs.size()-1;i>=0;i--) {
 				Vehicle v = vs.get(i);
 				v.pretick(ticks, f, highwayLength);
+				f = v;
 			}
 		}
 		for (Vehicle v : vehicles) v.tick();

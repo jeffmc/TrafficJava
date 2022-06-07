@@ -30,6 +30,9 @@ public class HighwayTable implements HighwaySelectionListener {
 			new DefaultHighwayTableColumn<Double>("Brake", double.class, true, (v) -> v.brake, (v,o) -> v.brake = o),
 			new DefaultHighwayTableColumn<Double>("X", double.class, true, (v) -> v.transform.x(), (v,o) -> v.transform.x(o)),
 			new DefaultHighwayTableColumn<Double>("Y", double.class, true, (v) -> v.transform.y(), (v,o) -> v.transform.y(o)),
+			new DefaultHighwayTableColumn<Double>("FD", double.class, false, (v) -> v.cachedFrontDistance, null),
+			new DefaultHighwayTableColumn<Double>("SD", double.class, false, (v) -> v.cachedStoppingDistance, null),
+			new DefaultHighwayTableColumn<Double>("EFD", double.class, false, (v) -> v.cachedEstimatedFrontDistance, null),
 	};
 	
 	// Null model if sim hasn't been assigned

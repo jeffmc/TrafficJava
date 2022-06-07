@@ -97,6 +97,9 @@ public class TrafficSimulation {
 					msx = e.x();
 					msy = e.y();
 					break;
+				case Event.BUTTON3:
+					highway.addCarAt(e.x()+cam.x,e.y()+cam.y);
+					break;
 				}
 				break;
 			case Event.MOUSE_RELEASED:
@@ -125,7 +128,7 @@ public class TrafficSimulation {
 		msize.set(mstart).sub(mnow).abs();
 		morigin.set(mstart).min(mnow);
 	}
-
+	
 	private void setMouseNowRelativeToCam(Event e) { // Converts from screen -> world coords
 		mnow.set(e.x()+cam.x, e.y()+cam.y);
 	}
